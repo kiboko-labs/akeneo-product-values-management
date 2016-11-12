@@ -1,0 +1,23 @@
+{
+    "name": "kiboko/akeneo-product-values-management",
+    "description": "Generate your product value class",
+    "type": "app",
+    "require": {
+        "nikic/php-parser": "^2.1",
+        "symfony/console": "^3.1",
+        "league/flysystem": "^1.0",
+        "doctrine/annotations": "^1.3"
+    },
+    "license": "lgpl",
+    "authors": [
+        {
+            "name": "Grégory Planchat",
+            "email": "gregory@kiboko.fr"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Kiboko\\Component\\AkeneoProductValues\\": "src/"
+        }
+    }
+}
