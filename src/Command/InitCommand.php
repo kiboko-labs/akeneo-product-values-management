@@ -97,7 +97,7 @@ class InitCommand extends Command
                 $extensionClass->getNode()
             ]
         );
-        $builder->initialize($filesystem, 'src/' . $vendor . '/Bundle/AppBundle/');
-        $builder->generate($filesystem, 'src/' . $vendor . '/Bundle/AppBundle/');
+        $builder->initialize($filesystem, 'src/' . $vendor . '/Bundle/' . $bundle . '/');
+        $builder->generate($filesystem, 'src/' . $vendor . '/Bundle/' . $bundle . '/');
     }
 }
