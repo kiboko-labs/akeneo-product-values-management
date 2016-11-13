@@ -26,22 +26,24 @@ class ProductValueCodeGenerator implements Builder
     /**
      * @var Builder[]
      */
-    private $exposedMappedFields;
+    private $internalFields;
+
+    /**
+     * @var Builder[]
+     */
+    private $methods;
 
     /**
      * @param string $className
      * @param string $namespace
-     * @param Builder[] $exposedMappedFields
      */
-    public function __construct($className, $namespace, array $exposedMappedFields)
+    public function __construct($className, $namespace)
     {
         $this->className = $className;
         $this->namespace = $namespace;
-        $this->useStatements = [
-            'Symfony\\Component\\DependencyInjection\\ContainerBuilder',
-            'Symfony\\Component\\HttpKernel\\Bundle\\Bundle',
-        ];
-        $this->exposedMappedFields = [];
+        $this->useStatements = [];
+        $this->internalFields = [];
+        $this->methods = [];
     }
 
     /**
@@ -105,25 +107,49 @@ class ProductValueCodeGenerator implements Builder
     /**
      * @return \PhpParser\Builder[]
      */
-    public function getExposedMappedFields()
+    public function getInternalFields()
     {
-        return $this->exposedMappedFields;
+        return $this->internalFields;
     }
 
     /**
-     * @param \PhpParser\Builder $exposedMappedField
+     * @param \PhpParser\Builder $internalFields
      */
-    public function addExposedMappedField($exposedMappedField)
+    public function addInternalField($internalFields)
     {
-        $this->exposedMappedFields[] = $exposedMappedField;
+        $this->internalFields[] = $internalFields;
     }
 
     /**
-     * @param \PhpParser\Builder[] $exposedMappedFields
+     * @param \PhpParser\Builder[] $internalFields
      */
-    public function setExposedMappedFields(array $exposedMappedFields)
+    public function setInternalFields(array $internalFields)
     {
-        $this->exposedMappedFields = $exposedMappedFields;
+        $this->internalFields = $internalFields;
+    }
+
+    /**
+     * @return \PhpParser\Builder[]
+     */
+    public function getMethods()
+    {
+        return $this->methods;
+    }
+
+    /**
+     * @param \PhpParser\Builder $method
+     */
+    public function addMethod($method)
+    {
+        $this->methods[] = $method;
+    }
+
+    /**
+     * @param \PhpParser\Builder[] $methods
+     */
+    public function setMethods(array $methods)
+    {
+        $this->methods = $methods;
     }
 
     /**
@@ -141,14 +167,17 @@ class ProductValueCodeGenerator implements Builder
             );
         }
 
-        $root->addStmt(
-            $class = $factory->class($this->className)
-                ->extend('Bundle')
-        );
+        $class = $factory->class($this->className);
 
-        foreach ($this->exposedMappedFields as $fieldCodeGenerator) {
-            $class->addStmt($fieldCodeGenerator);
+        foreach ($this->internalFields as $generator) {
+            $class->addStmt($generator);
         }
+
+        foreach ($this->methods as $generator) {
+            $class->addStmt($generator);
+        }
+
+        $root->addStmt($class);
 
         return $root->getNode();
     }

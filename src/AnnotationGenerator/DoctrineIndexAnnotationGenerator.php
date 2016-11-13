@@ -8,6 +8,16 @@ class DoctrineIndexAnnotationGenerator implements AnnotationGeneratorInterface
     use DoctrineAnnotationGeneratorTrait;
 
     /**
+     * DoctrineIndexAnnotationGenerator constructor.
+     *
+     * @param array $params
+     */
+    public function __construct(array $params = [])
+    {
+        $this->setParams($params);
+    }
+
+    /**
      * @return string
      */
     public function getName()

@@ -8,6 +8,16 @@ class DoctrineGeneratedValueAnnotationGenerator implements AnnotationGeneratorIn
     use DoctrineAnnotationGeneratorTrait;
 
     /**
+     * DoctrineGeneratedValueAnnotationGenerator constructor.
+     *
+     * @param array $params
+     */
+    public function __construct(array $params = [])
+    {
+        $this->setParams($params);
+    }
+
+    /**
      * @return string
      */
     public function getStrategy()

@@ -8,6 +8,18 @@ class DoctrineEntityAnnotationGenerator implements AnnotationGeneratorInterface
     use DoctrineAnnotationGeneratorTrait;
 
     /**
+     * DoctrineEntityAnnotationGenerator constructor.
+     *
+     * @param string $className
+     * @param string $namespace
+     * @param array $params
+     */
+    public function __construct($className, $namespace, array $params = [])
+    {
+        $this->setParams($params + ['type' => $namespace . '\\' . $className]);
+    }
+
+    /**
      * @return string
      */
     public function getEntityClass()

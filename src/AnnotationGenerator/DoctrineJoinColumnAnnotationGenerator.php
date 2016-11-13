@@ -8,6 +8,16 @@ class DoctrineJoinColumnAnnotationGenerator implements AnnotationGeneratorInterf
     use DoctrineAnnotationGeneratorTrait;
 
     /**
+     * DoctrineJoinColumnAnnotationGenerator constructor.
+     *
+     * @param array $params
+     */
+    public function __construct(array $params = [])
+    {
+        $this->setParams($params);
+    }
+
+    /**
      * @return string
      */
     public function getName()

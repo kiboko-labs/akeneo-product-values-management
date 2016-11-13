@@ -8,6 +8,16 @@ class DoctrineMappedSuperClassAnnotationGenerator implements AnnotationGenerator
     use DoctrineAnnotationGeneratorTrait;
 
     /**
+     * DoctrineMappedSuperClassAnnotationGenerator constructor.
+     *
+     * @param array $params
+     */
+    public function __construct(array $params = [])
+    {
+        $this->setParams($params);
+    }
+
+    /**
      * @return string
      */
     public function getRepositoryClass()

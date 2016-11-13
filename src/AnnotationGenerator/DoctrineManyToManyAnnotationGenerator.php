@@ -8,6 +8,16 @@ class DoctrineManyToManyAnnotationGenerator implements AnnotationGeneratorInterf
     use DoctrineAnnotationGeneratorTrait;
 
     /**
+     * DoctrineManyToManyAnnotationGenerator constructor.
+     *
+     * @param array $params
+     */
+    public function __construct(array $params = [])
+    {
+        $this->setParams($params);
+    }
+
+    /**
      * @return string
      */
     public function getTargetEntity()

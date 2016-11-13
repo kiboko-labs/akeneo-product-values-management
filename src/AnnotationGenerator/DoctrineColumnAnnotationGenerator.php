@@ -8,6 +8,17 @@ class DoctrineColumnAnnotationGenerator implements AnnotationGeneratorInterface
     use DoctrineAnnotationGeneratorTrait;
 
     /**
+     * DoctrineColumnAnnotationGenerator constructor.
+     *
+     * @param string $type
+     * @param array $params
+     */
+    public function __construct($type, array $params = [])
+    {
+        $this->setParams($params + ['type' => $type]);
+    }
+
+    /**
      * @return string
      */
     public function getType()
