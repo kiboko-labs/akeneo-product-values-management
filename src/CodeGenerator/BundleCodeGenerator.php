@@ -110,7 +110,7 @@ class BundleCodeGenerator implements Builder
     }
 
     /**
-     * @return Node\Stmt[]
+     * @return Node[]
      */
     public function getBuildMethodStatements()
     {
@@ -118,15 +118,15 @@ class BundleCodeGenerator implements Builder
     }
 
     /**
-     * @param Node\Stmt $statement
+     * @param Node $statement
      */
-    public function addBuildMethodStatements(Node\Stmt $statement)
+    public function addBuildMethodStatements(Node $statement)
     {
         $this->buildMethodStatements[] = $statement;
     }
 
     /**
-     * @param Node\Stmt[] $statements
+     * @param Node[] $statements
      */
     public function setBuildMethodStatements(array $statements)
     {

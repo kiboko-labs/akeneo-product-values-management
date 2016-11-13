@@ -112,7 +112,7 @@ class ExtensionCodeGenerator implements Builder
     }
 
     /**
-     * @return Node\Stmt[]
+     * @return Node[]
      */
     public function getLoadMethodStatements()
     {
@@ -120,15 +120,15 @@ class ExtensionCodeGenerator implements Builder
     }
 
     /**
-     * @param Node\Stmt $statement
+     * @param Node $statement
      */
-    public function addLoadMethodStatements(Node\Stmt $statement)
+    public function addLoadMethodStatement(Node $statement)
     {
         $this->loadMethodStatements[] = $statement;
     }
 
     /**
-     * @param Node\Stmt[] $statements
+     * @param Node[] $statements
      */
     public function setLoadMethodStatements(array $statements)
     {
@@ -168,37 +168,6 @@ class ExtensionCodeGenerator implements Builder
             ->addParam($factory->param('configs')->setTypeHint('array'))
             ->addParam($factory->param('container')->setTypeHint('ContainerBuilder'))
         ;
-
-        $method->addStmt(
-            new Node\Expr\Assign(
-                new Node\Expr\Variable('loader'),
-                new Node\Expr\New_(
-                    new Node\Name('Loader\\YamlFileLoader'),
-                    [
-                        new Node\Expr\Variable('container'),
-                        new Node\Expr\New_(
-                            new Node\Name('FileLocator'),
-                            [
-                                new Node\Expr\BinaryOp\Concat(
-                                    new Node\Scalar\MagicConst\Dir(),
-                                    new Node\Scalar\String_('/../Resources/config')
-                                )
-                            ]
-                        )
-                    ]
-                )
-            )
-        );
-
-        $method->addStmt(
-            new Node\Expr\MethodCall(
-                new Node\Expr\Variable('loader'),
-                'load',
-                [
-                    new Node\Scalar\String_('services.yml')
-                ]
-            )
-        );
 
         $method->addStmts($this->loadMethodStatements);
 

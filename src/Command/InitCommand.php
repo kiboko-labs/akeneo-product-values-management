@@ -4,6 +4,8 @@ namespace Kiboko\Component\AkeneoProductValues\Command;
 
 use Kiboko\Component\AkeneoProductValues\Builder\BundleBuilder;
 use Kiboko\Component\AkeneoProductValues\CodeGenerator\BundleCodeGenerator;
+use Kiboko\Component\AkeneoProductValues\CodeGenerator\Extension\ExtensionFileLoaderInstanciationCodeGenerator;
+use Kiboko\Component\AkeneoProductValues\CodeGenerator\Extension\ExtensionYamlFileLoadingCodeGenerator;
 use Kiboko\Component\AkeneoProductValues\CodeGenerator\ExtensionCodeGenerator;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
@@ -85,6 +87,14 @@ class InitCommand extends Command
 
         $bundleClass = new BundleCodeGenerator($className, $namespace);
         $extensionClass = new ExtensionCodeGenerator($className, $namespace);
+
+        $extensionClass->addLoadMethodStatement(
+            (new ExtensionFileLoaderInstanciationCodeGenerator('loader', 'container'))->getNode()
+        );
+
+        $extensionClass->addLoadMethodStatement(
+            (new ExtensionYamlFileLoadingCodeGenerator('loader', 'services.yml'))->getNode()
+        );
 
         $builder = new BundleBuilder();
         $builder->setFileDefinition($className . '.php',
