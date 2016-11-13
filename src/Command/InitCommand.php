@@ -33,8 +33,8 @@ class InitCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('akeneo-appbundle-init')
-            ->setDescription('Initializes an AppBundle')
+            ->setName('akeneo:init')
+            ->setDescription('Initializes an AppBundle for Akeneo')
             ->setHelp("This initializes your AppBundle if it does not already exist.")
         ;
     }
