@@ -28,8 +28,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 
-class InitCommand extends Command
+class InitCommand extends Command implements FilesystemAwareInterface
 {
+    use FilesystemAwareTrait;
+
     protected function configure()
     {
         $this
@@ -91,10 +93,6 @@ class InitCommand extends Command
         if (!$questionHelper->ask($input, $output, $question)) {
             return;
         }
-
-        $filesystem = new Filesystem(
-            new Local(__DIR__ . '/../../testing')
-        );
 
         $bundleClass = new BundleCodeGenerator($className, $namespace);
         $extensionClass = new ExtensionCodeGenerator($className, $namespace);
@@ -173,7 +171,7 @@ class InitCommand extends Command
             'parameters' => [],
             'services' => [],
         ]);
-        $builder->initialize($filesystem, 'src/' . $vendor . '/Bundle/' . $bundle . '/');
-        $builder->generate($filesystem, 'src/' . $vendor . '/Bundle/' . $bundle . '/');
+        $builder->initialize($this->getFilesystem(), 'src/' . $vendor . '/Bundle/' . $bundle . '/');
+        $builder->generate($this->getFilesystem(), 'src/' . $vendor . '/Bundle/' . $bundle . '/');
     }
 }
