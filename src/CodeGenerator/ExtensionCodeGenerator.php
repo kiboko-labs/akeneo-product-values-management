@@ -169,6 +169,37 @@ class ExtensionCodeGenerator implements Builder
             ->addParam($factory->param('container')->setTypeHint('ContainerBuilder'))
         ;
 
+        $method->addStmt(
+            new Node\Expr\Assign(
+                new Node\Expr\Variable('loader'),
+                new Node\Expr\New_(
+                    new Node\Name('Loader\\YamlFileLoader'),
+                    [
+                        new Node\Expr\Variable('container'),
+                        new Node\Expr\New_(
+                            new Node\Name('FileLocator'),
+                            [
+                                new Node\Expr\BinaryOp\Concat(
+                                    new Node\Scalar\MagicConst\Dir(),
+                                    new Node\Scalar\String_('/../Resources/config')
+                                )
+                            ]
+                        )
+                    ]
+                )
+            )
+        );
+
+        $method->addStmt(
+            new Node\Expr\MethodCall(
+                new Node\Expr\Variable('loader'),
+                'load',
+                [
+                    new Node\Scalar\String_('services.yml')
+                ]
+            )
+        );
+
         $method->addStmts($this->loadMethodStatements);
 
         return $method;
