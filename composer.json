@@ -1,12 +1,20 @@
 {
     "name": "kiboko/akeneo-product-values-management",
     "description": "Generate your product value class",
-    "type": "app",
+    "type": "composer-plugin",
     "require": {
+        "composer-plugin-api": "^1.0",
         "nikic/php-parser": "^2.1",
         "symfony/console": "^3.1",
         "league/flysystem": "^1.0",
-        "doctrine/annotations": "^1.3"
+        "doctrine/annotations": "^1.3",
+        "symfony/yaml": "^3.1"
+    },
+    "require-dev": {
+        "composer/composer": "^1.0"
+    },
+    "extra": {
+        "class": "Kiboko\\Component\\AkeneoProductValues\\Composer\\ProductValuePlugin"
     },
     "license": "lgpl",
     "authors": [

@@ -3,14 +3,11 @@
 namespace Kiboko\Component\AkeneoProductValues\Command;
 
 use Kiboko\Component\AkeneoProductValues\AnnotationGenerator\DoctrineColumnAnnotationGenerator;
-use Kiboko\Component\AkeneoProductValues\AnnotationGenerator\DoctrineEntityAnnotationGenerator;
 use Kiboko\Component\AkeneoProductValues\AnnotationGenerator\DoctrineGeneratedValueAnnotationGenerator;
-use Kiboko\Component\AkeneoProductValues\AnnotationGenerator\DoctrineIndexAnnotationGenerator;
 use Kiboko\Component\AkeneoProductValues\AnnotationGenerator\DoctrineOneToManyAnnotationGenerator;
 use Kiboko\Component\AkeneoProductValues\AnnotationGenerator\UnparameteredDoctrineAnnotationGenerator;
 use Kiboko\Component\AkeneoProductValues\Builder\BundleBuilder;
 use Kiboko\Component\AkeneoProductValues\CodeGenerator\BundleCodeGenerator;
-use Kiboko\Component\AkeneoProductValues\CodeGenerator\DoctrineEntity\DoctrineEntityCodeGenerator;
 use Kiboko\Component\AkeneoProductValues\CodeGenerator\DoctrineEntity\DoctrineEntityReferenceFieldCodeGenerator;
 use Kiboko\Component\AkeneoProductValues\CodeGenerator\DoctrineEntity\DoctrineEntityReferenceFieldGetMethodCodeGenerator;
 use Kiboko\Component\AkeneoProductValues\CodeGenerator\DoctrineEntity\DoctrineEntityReferenceFieldSetMethodCodeGenerator;
@@ -36,7 +33,7 @@ class InitCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('akeneo:product-values:init')
+            ->setName('akeneo-appbundle-init')
             ->setDescription('Initializes an AppBundle')
             ->setHelp("This initializes your AppBundle if it does not already exist.")
         ;
