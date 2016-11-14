@@ -42,6 +42,7 @@ class ProductValueCodeGenerator implements Builder
         $this->className = $className;
         $this->namespace = $namespace;
         $this->useStatements = [
+            'ORM' => 'Doctrine\\ORM\\Mapping',
             'PimProductValue' => 'Pim\\Component\\Catalog\\Model\\ProductValue',
         ];
         $this->internalFields = [];
@@ -100,10 +101,15 @@ class ProductValueCodeGenerator implements Builder
 
     /**
      * @param \string $useStatement
+     * @param \string|null $alias
      */
-    public function addUseStatement($useStatement)
+    public function addUseStatement($useStatement, $alias = null)
     {
-        $this->useStatements[] = $useStatement;
+        if ($alias !== null) {
+            $this->useStatements[$alias] = $useStatement;
+        } else {
+            $this->useStatements[] = $useStatement;
+        }
     }
 
     /**
