@@ -70,7 +70,7 @@ class ReferenceDataInstaller implements InstallerInterface
      */
     public function supports($packageType)
     {
-        return $packageType === 'akeneo-reference-data' || $this->decorated->supports($packageType);
+        return $packageType === 'akeneo-reference-data';
     }
 
     /**
