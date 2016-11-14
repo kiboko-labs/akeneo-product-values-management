@@ -20,6 +20,11 @@ class DoctrineEntityCodeGenerator implements Builder
     private $namespace;
 
     /**
+     * @var string[]
+     */
+    private $useStatements;
+
+    /**
      * @var AnnotationGeneratorInterface[]
      */
     private $doctrineAnnotationGenerators;
@@ -44,6 +49,7 @@ class DoctrineEntityCodeGenerator implements Builder
     ) {
         $this->className = $className;
         $this->namespace = $namespace;
+        $this->useStatements = [];
         $this->doctrineAnnotationGenerators = $doctrineAnnotationGenerators;
         $this->fieldCodeGenerators = $fieldCodeGenerators;
     }
@@ -67,6 +73,14 @@ class DoctrineEntityCodeGenerator implements Builder
     /**
      * @return string
      */
+    public function getFQN()
+    {
+        return $this->namespace.'\\'.$this->className;
+    }
+
+    /**
+     * @return string
+     */
     public function getNamespace()
     {
         return $this->namespace;
@@ -81,6 +95,30 @@ class DoctrineEntityCodeGenerator implements Builder
     }
 
     /**
+     * @return \string[]
+     */
+    public function getUseStatements()
+    {
+        return $this->useStatements;
+    }
+
+    /**
+     * @param \string $useStatement
+     */
+    public function addUseStatement($useStatement)
+    {
+        $this->useStatements[] = $useStatement;
+    }
+
+    /**
+     * @param \string[] $useStatements
+     */
+    public function setUseStatements(array $useStatements)
+    {
+        $this->useStatements = $useStatements;
+    }
+
+    /**
      * @return Node
      */
     public function getNode()
@@ -88,6 +126,14 @@ class DoctrineEntityCodeGenerator implements Builder
         $factory = new BuilderFactory();
 
         $root = $factory->namespace($this->namespace);
+        sort($this->useStatements);
+        foreach ($this->useStatements as $alias => $statement) {
+            $use = $factory->use($statement);
+            if (!is_numeric($alias)) {
+                $use->as($alias);
+            }
+            $root->addStmt($use);
+        }
 
         $class = $factory->class($this->className)
             ->setDocComment($this->compileDocComment());

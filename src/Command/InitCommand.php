@@ -2,23 +2,11 @@
 
 namespace Kiboko\Component\AkeneoProductValues\Command;
 
-use Kiboko\Component\AkeneoProductValues\AnnotationGenerator\DoctrineColumnAnnotationGenerator;
-use Kiboko\Component\AkeneoProductValues\AnnotationGenerator\DoctrineGeneratedValueAnnotationGenerator;
-use Kiboko\Component\AkeneoProductValues\AnnotationGenerator\DoctrineOneToManyAnnotationGenerator;
-use Kiboko\Component\AkeneoProductValues\AnnotationGenerator\UnparameteredDoctrineAnnotationGenerator;
 use Kiboko\Component\AkeneoProductValues\Builder\BundleBuilder;
 use Kiboko\Component\AkeneoProductValues\CodeGenerator\BundleCodeGenerator;
-use Kiboko\Component\AkeneoProductValues\CodeGenerator\DoctrineEntity\DoctrineEntityReferenceFieldCodeGenerator;
-use Kiboko\Component\AkeneoProductValues\CodeGenerator\DoctrineEntity\DoctrineEntityReferenceFieldGetMethodCodeGenerator;
-use Kiboko\Component\AkeneoProductValues\CodeGenerator\DoctrineEntity\DoctrineEntityReferenceFieldSetMethodCodeGenerator;
-use Kiboko\Component\AkeneoProductValues\CodeGenerator\DoctrineEntity\DoctrineEntityScalarFieldCodeGenerator;
-use Kiboko\Component\AkeneoProductValues\CodeGenerator\DoctrineEntity\DoctrineEntityScalarFieldGetMethodCodeGenerator;
-use Kiboko\Component\AkeneoProductValues\CodeGenerator\DoctrineEntity\DoctrineEntityScalarFieldSetMethodCodeGenerator;
 use Kiboko\Component\AkeneoProductValues\CodeGenerator\Extension\ExtensionFileLoaderInstanciationCodeGenerator;
 use Kiboko\Component\AkeneoProductValues\CodeGenerator\Extension\ExtensionYamlFileLoadingCodeGenerator;
 use Kiboko\Component\AkeneoProductValues\CodeGenerator\ExtensionCodeGenerator;
-use Kiboko\Component\AkeneoProductValues\CodeGenerator\ProductValueCodeGenerator;
-use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\FormatterHelper;
@@ -50,9 +38,9 @@ class InitCommand extends Command implements FilesystemAwareInterface
 
         $question = new Question($formatterHelper->formatSection(
             'Create your App bundle',
-            'Please enter the vendor namespace of the bundle to create' . PHP_EOL,
+            'Please enter the vendor namespace of the bundle to create (leave empty for not using namespace)' . PHP_EOL,
             'info'
-        ), 'Kiboko');
+        ));
         $vendor = $questionHelper->ask($input, $output, $question);
 
         $question = new Question($formatterHelper->formatSection(
@@ -73,7 +61,13 @@ class InitCommand extends Command implements FilesystemAwareInterface
         $bundle = $questionHelper->ask($input, $output, $question);
 
         $className = $vendor . $bundle;
-        $namespace = $vendor . '\\Bundle\\' . $bundle;
+        if ($vendor === '') {
+            $namespace = $bundle;
+            $path = $bundle . '/';
+        } else {
+            $namespace = $vendor . '\\Bundle\\' . $bundle;
+            $path = $vendor . '/Bundle/' . $bundle . '/';
+        }
 
         $output->writeln($formatterHelper->formatBlock(
             [
@@ -96,7 +90,6 @@ class InitCommand extends Command implements FilesystemAwareInterface
 
         $bundleClass = new BundleCodeGenerator($className, $namespace);
         $extensionClass = new ExtensionCodeGenerator($className, $namespace);
-        $productValueClass = new ProductValueCodeGenerator('ProductValue', $namespace . '\\Model');
 
         $extensionClass->addLoadMethodStatement(
             (new ExtensionFileLoaderInstanciationCodeGenerator('loader', 'container'))->getNode()
@@ -105,51 +98,6 @@ class InitCommand extends Command implements FilesystemAwareInterface
         $extensionClass->addLoadMethodStatement(
             (new ExtensionYamlFileLoadingCodeGenerator('loader', 'services.yml'))->getNode()
         );
-
-        $productValueClass->addInternalField(
-            (new DoctrineEntityScalarFieldCodeGenerator('color', 'string',
-                [
-                    new DoctrineColumnAnnotationGenerator('string'),
-                    new UnparameteredDoctrineAnnotationGenerator('Id'),
-                    new DoctrineGeneratedValueAnnotationGenerator(),
-                ]
-            ))
-        );
-
-        $productValueClass->addMethod(
-            (new DoctrineEntityReferenceFieldCodeGenerator('color', 'Color', $namespace . '\\Model',
-                [
-                    new DoctrineOneToManyAnnotationGenerator()
-                ]
-            ))
-        );
-
-        $productValueClass->addMethod(
-            (new DoctrineEntityScalarFieldGetMethodCodeGenerator('colorCode', 'string'))
-        );
-
-        $productValueClass->addMethod(
-            (new DoctrineEntityScalarFieldSetMethodCodeGenerator('colorCode', 'string'))
-        );
-
-        $productValueClass->addMethod(
-            (new DoctrineEntityScalarFieldGetMethodCodeGenerator('created', 'DateTimeInterface'))
-        );
-
-        $productValueClass->addMethod(
-            (new DoctrineEntityScalarFieldSetMethodCodeGenerator('created', 'DateTimeInterface'))
-        );
-
-        $productValueClass->addMethod(
-            (new DoctrineEntityReferenceFieldGetMethodCodeGenerator('color', 'Color', $namespace . '\\Model'))
-        );
-
-        $productValueClass->addMethod(
-            (new DoctrineEntityReferenceFieldSetMethodCodeGenerator('color', 'Color', $namespace . '\\Model'))
-        );
-
-        $productValueClass->addUseStatement('DateTimeInterface');
-        $productValueClass->addUseStatement($namespace . '\\Model\\Color');
 
         $builder = new BundleBuilder();
         $builder->setFileDefinition($className . '.php',
@@ -162,16 +110,11 @@ class InitCommand extends Command implements FilesystemAwareInterface
                 $extensionClass->getNode()
             ]
         );
-        $builder->setFileDefinition('Model/ProductValue.php',
-            [
-                $productValueClass->getNode()
-            ]
-        );
         $builder->setConfigFile('Resources/config/services.yml', [
             'parameters' => [],
             'services' => [],
         ]);
-        $builder->initialize($this->getFilesystem(), 'src/' . $vendor . '/Bundle/' . $bundle . '/');
-        $builder->generate($this->getFilesystem(), 'src/' . $vendor . '/Bundle/' . $bundle . '/');
+        $builder->initialize($this->getFilesystem(), 'src/' . $path);
+        $builder->generate($this->getFilesystem(), 'src/' . $path);
     }
 }

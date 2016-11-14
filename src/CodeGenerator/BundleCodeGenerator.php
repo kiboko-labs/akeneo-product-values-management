@@ -77,8 +77,6 @@ class BundleCodeGenerator implements Builder
 
     /**
      * @param string $namespace
-     *
-     * @return $this
      */
     public function setNamespace($namespace)
     {
@@ -142,10 +140,12 @@ class BundleCodeGenerator implements Builder
 
         $root = $factory->namespace($this->namespace);
         sort($this->useStatements);
-        foreach ($this->useStatements as $statement) {
-            $root->addStmt(
-                $factory->use($statement)
-            );
+        foreach ($this->useStatements as $alias => $statement) {
+            $use = $factory->use($statement);
+            if (!is_numeric($alias)) {
+                $use->as($alias);
+            }
+            $root->addStmt($use);
         }
 
         $root->addStmt(

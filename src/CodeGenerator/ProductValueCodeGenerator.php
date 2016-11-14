@@ -41,7 +41,9 @@ class ProductValueCodeGenerator implements Builder
     {
         $this->className = $className;
         $this->namespace = $namespace;
-        $this->useStatements = [];
+        $this->useStatements = [
+            'PimProductValue' => 'Pim\\Component\\Catalog\\Model\\ProductValue',
+        ];
         $this->internalFields = [];
         $this->methods = [];
     }
@@ -161,10 +163,12 @@ class ProductValueCodeGenerator implements Builder
 
         $root = $factory->namespace($this->namespace);
         sort($this->useStatements);
-        foreach ($this->useStatements as $statement) {
-            $root->addStmt(
-                $factory->use($statement)
-            );
+        foreach ($this->useStatements as $alias => $statement) {
+            $use = $factory->use($statement);
+            if (!is_numeric($alias)) {
+                $use->as($alias);
+            }
+            $root->addStmt($use);
         }
 
         $class = $factory->class($this->className);
