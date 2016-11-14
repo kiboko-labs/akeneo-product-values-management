@@ -52,6 +52,7 @@ class ReferenceDataInstaller implements InstallerInterface
         $this->io = $io;
         $this->composer = $composer;
         $this->builder = $builder;
+        $this->rules = [];
 
         $this->decorated = new PluginInstaller($io, $composer, 'akeneo-reference-data');
     }
