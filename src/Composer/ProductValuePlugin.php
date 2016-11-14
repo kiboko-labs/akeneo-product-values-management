@@ -12,9 +12,6 @@ class ProductValuePlugin implements PluginInterface, Capable
 {
     public function activate(Composer $composer, IOInterface $io)
     {
-        $builder = new BundleBuilder();
-        $installer = new ReferenceDataInstaller($io, $composer, $builder);
-        $composer->getInstallationManager()->addInstaller($installer);
     }
 
     public function getCapabilities()
