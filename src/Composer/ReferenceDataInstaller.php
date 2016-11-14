@@ -164,7 +164,7 @@ class ReferenceDataInstaller implements InstallerInterface
 
         $ruleNames = $this->rules;
         array_walk($ruleNames, function(RuleInterface &$value, $index) {
-            $value = sprintf('  %d. %s [%s]', $index, $value->getName(), $value->getReferenceClass());
+            $value = sprintf('  %d. <info>%s</info> [%s]', $index, $value->getName(), $value->getReferenceClass());
         });
 
         $ruleCodes = $this->rules;
@@ -174,12 +174,15 @@ class ReferenceDataInstaller implements InstallerInterface
 
         while (true) {
             $type = $this->io->askAndValidate(
-                [
-                    'Please choose a reference data to add:'
-                ] + $ruleNames,
+                array_merge(
+                    [
+                        'Please choose a reference data to add:'
+                    ],
+                    $ruleNames
+                ),
                 function ($value) use($ruleCodes) {
                     return (is_numeric($value) && $value > 0 && $value < (count($ruleCodes) - 1)) ||
-                        in_array($value, $ruleCodes);
+                    in_array($value, $ruleCodes);
                 },
                 2
             );
