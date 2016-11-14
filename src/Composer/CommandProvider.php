@@ -11,20 +11,6 @@ use League\Flysystem\Filesystem;
 
 class CommandProvider implements CommandProviderCapability
 {
-    /**
-     * @var Composer
-     */
-    private $composer;
-
-    /**
-     * CommandProvider constructor.
-     * @param Composer $composer
-     */
-    public function __construct(Composer $composer)
-    {
-        $this->composer = $composer;
-    }
-
     public function getCommands()
     {
         $filesystem = new Filesystem(
@@ -51,33 +37,13 @@ class CommandProvider implements CommandProviderCapability
 //                $filesystem
 //            ),
             new DecoratedCommand(
-                new Command\ReferenceData\ListCommand(
-                    null,
-                    $this->listRules()
-                ),
+                new Command\ReferenceData\ListCommand(),
                 $filesystem
             ),
             new DecoratedCommand(
                 new Command\ReferenceData\BuildCommand(),
                 $filesystem
             ),
-        ];
-    }
-
-    private function listRules()
-    {
-        /** @var RuleCapability[] $capabilities */
-        $capabilities = $this->composer->getPluginManager()->getPluginCapabilities(RuleCapability::class);
-
-        /** @var RuleInterface[] $rules */
-        $rules = [];
-        foreach ($capabilities as $capability) {
-            $rules += $capability->getRules($this->composer);
-        }
-
-        return $rules + [
-            'datetime.single' => 'Kiboko\\AkeneoProductValuesPackage\\Datetime\\Builder\\SingleDatetimeRule',
-            'datetime.multi' => 'Kiboko\\AkeneoProductValuesPackage\\Datetime\\Builder\\MultipleDatetimeRule',
         ];
     }
 }

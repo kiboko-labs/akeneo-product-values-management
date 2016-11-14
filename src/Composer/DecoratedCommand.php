@@ -3,6 +3,8 @@
 namespace Kiboko\Component\AkeneoProductValues\Composer;
 
 use Composer\Command\BaseCommand;
+use Composer\Composer;
+use Kiboko\Component\AkeneoProductValues\Command\ComposerAwareInterface;
 use Kiboko\Component\AkeneoProductValues\Command\FilesystemAwareInterface;
 use Kiboko\Component\AkeneoProductValues\Command\FilesystemAwareTrait;
 use League\Flysystem\Adapter\Local;
@@ -42,6 +44,15 @@ class DecoratedCommand extends BaseCommand implements FilesystemAwareInterface
 
         if ($this->decorated instanceof FilesystemAwareInterface) {
             $this->decorated->setFilesystem($filesystem);
+        }
+    }
+
+    public function setComposer(Composer $composer)
+    {
+        parent::setComposer($composer);
+
+        if ($this->decorated instanceof ComposerAwareInterface) {
+            $this->decorated->setComposer($composer);
         }
     }
 
