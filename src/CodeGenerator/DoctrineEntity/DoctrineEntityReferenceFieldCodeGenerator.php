@@ -114,8 +114,12 @@ class DoctrineEntityReferenceFieldCodeGenerator implements Builder
     {
         $annotations = $this->prepareAnnotations();
 
+        array_walk($annotations, function(&$current) {
+            $current = '     * ' . $current;
+        });
+
         return '/**' . PHP_EOL
-            .array_walk($annotations, function($current) {return '     * ' . $current . PHP_EOL;})
+            .implode(PHP_EOL, $annotations) . PHP_EOL
             .'     */';
     }
 
