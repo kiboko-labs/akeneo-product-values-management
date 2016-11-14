@@ -31,21 +31,6 @@ class ReferenceDataInstaller implements InstallerInterface
     private $builder;
 
     /**
-     * @var string
-     */
-    private $defaultField;
-
-    /**
-     * @var string
-     */
-    private $class;
-
-    /**
-     * @var string
-     */
-    private $namespace;
-
-    /**
      * @var RuleInterface[]
      */
     private $rules;
@@ -60,19 +45,13 @@ class ReferenceDataInstaller implements InstallerInterface
      * @param IOInterface $io
      * @param Composer $composer
      * @param BundleBuilder $builder
-     * @param string $defaultField
-     * @param string $class
-     * @param string|null $namespace
      * @param string $type
      */
-    public function __construct(IOInterface $io, Composer $composer, BundleBuilder $builder, $defaultField, $class, $namespace = null, $type = 'akeneo-reference-data')
+    public function __construct(IOInterface $io, Composer $composer, BundleBuilder $builder, $type = 'akeneo-reference-data')
     {
         $this->io = $io;
         $this->composer = $composer;
         $this->builder = $builder;
-        $this->defaultField = $defaultField;
-        $this->class = $class;
-        $this->namespace = $namespace;
 
         $this->decorated = new PluginInstaller($io, $composer, 'akeneo-reference-data');
     }
@@ -122,13 +101,12 @@ class ReferenceDataInstaller implements InstallerInterface
             new Adapter\Local(getcwd())
         );
 
-        $builder = new BundleBuilder();
-        if (!$this->runInteractively($builder)) {
+        if (!$this->runInteractively($this->builder)) {
             return;
         }
 
-        $builder->initialize($filesystem, $root . '/' . $path);
-        $builder->generate($filesystem, $root . '/' . $path);
+        $this->builder->initialize($filesystem, $root . '/' . $path);
+        $this->builder->generate($filesystem, $root . '/' . $path);
     }
 
     /**
@@ -179,11 +157,7 @@ class ReferenceDataInstaller implements InstallerInterface
 
     private function runInteractively(BundleBuilder $builder)
     {
-        $confirmMessage = sprintf(
-            'Do you want to add reference data of type "%s" to your Akeneo ProductValue class ?',
-            $this->namespace === null ? $this->class : ($this->namespace  .'\\'. $this->class)
-        );
-        if (!$this->io->askConfirmation($confirmMessage)) {
+        if (!$this->io->askConfirmation('Do you want to add reference data to your Akeneo ProductValue class ?')) {
             return;
         }
 
