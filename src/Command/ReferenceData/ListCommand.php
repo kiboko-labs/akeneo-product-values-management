@@ -3,6 +3,8 @@
 namespace Kiboko\Component\AkeneoProductValues\Command\ReferenceData;
 
 use Kiboko\Component\AkeneoProductValues\Builder\RuleInterface;
+use Kiboko\Component\AkeneoProductValues\Command\ComposerAwareInterface;
+use Kiboko\Component\AkeneoProductValues\Command\ComposerAwareTrait;
 use Kiboko\Component\AkeneoProductValues\Command\FilesystemAwareInterface;
 use Kiboko\Component\AkeneoProductValues\Command\FilesystemAwareTrait;
 use Kiboko\Component\AkeneoProductValues\Composer\RuleCapability;
@@ -12,19 +14,10 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ListCommand extends Command  implements FilesystemAwareInterface
+class ListCommand extends Command implements FilesystemAwareInterface, ComposerAwareInterface
 {
     use FilesystemAwareTrait;
-
-    /**
-     * ListCommand constructor.
-     * @param string $name
-     * @param array $rules
-     */
-    public function __construct($name = null)
-    {
-        parent::__construct($name);
-    }
+    use ComposerAwareTrait;
 
     protected function configure()
     {
@@ -43,7 +36,7 @@ class ListCommand extends Command  implements FilesystemAwareInterface
 
         $output->writeln(
             $formatterHelper->formatBlock(
-                $this->rules,
+                $this->listRules(),
                 'info'
             )
         );
@@ -52,7 +45,7 @@ class ListCommand extends Command  implements FilesystemAwareInterface
     private function listRules()
     {
         /** @var RuleCapability[] $capabilities */
-        $capabilities = $this->composer->getPluginManager()->getPluginCapabilities(RuleCapability::class);
+        $capabilities = $this->getComposer()->getPluginManager()->getPluginCapabilities(RuleCapability::class);
 
         /** @var RuleInterface[] $rules */
         $rules = [];
