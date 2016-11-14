@@ -118,6 +118,12 @@ class DoctrineEntityReferenceFieldSetMethodCodeGenerator implements Builder
             ->makePublic()
             ->setDocComment($this->compileDocComment())
             ->addParam($param)
+            ->addStmt(
+                new Node\Expr\Assign(
+                    new Node\Expr\PropertyFetch('this', $this->fieldName),
+                    new Node\Expr\Variable($this->fieldName)
+                )
+            )
         ;
 
         return $root->getNode();

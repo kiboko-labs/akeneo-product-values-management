@@ -114,6 +114,12 @@ class DoctrineEntityReferenceFieldGetMethodCodeGenerator implements Builder
             $root->setReturnType($this->className);
         }
 
+        $root->addStmt(
+            new Node\Stmt\Return_(
+                new Node\Expr\PropertyFetch('this', $this->fieldName)
+            )
+        );
+
         return $root->getNode();
     }
 
