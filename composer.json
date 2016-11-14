@@ -23,6 +23,7 @@
             "email": "gregory@kiboko.fr"
         }
     ],
+    "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
             "Kiboko\\Component\\AkeneoProductValues\\": "src/"
