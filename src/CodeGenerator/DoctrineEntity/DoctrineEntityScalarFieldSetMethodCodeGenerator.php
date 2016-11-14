@@ -99,7 +99,7 @@ class DoctrineEntityScalarFieldSetMethodCodeGenerator implements Builder
             ->addParam($param)
             ->addStmt(
                 new Node\Expr\Assign(
-                    new Node\Expr\PropertyFetch('this', $this->fieldName),
+                    new Node\Expr\PropertyFetch(new Node\Expr\Variable('this'), $this->fieldName),
                     new Node\Expr\Variable($this->fieldName)
                 )
             )
