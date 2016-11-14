@@ -37,11 +37,11 @@ class DoctrineEntityReferenceFieldGetMethodCodeGenerator implements Builder
      * ProductValueScalarFieldCodeGenerator constructor.
      * @param string $fieldName
      * @param string $className
-     * @param string $namespace
+     * @param string|null $namespace
      * @param bool $nullable
      * @param bool $useStrictTyping
      */
-    public function __construct($fieldName, $className, $namespace, $nullable = false, $useStrictTyping = false)
+    public function __construct($fieldName, $className, $namespace = null, $nullable = false, $useStrictTyping = false)
     {
         $this->fieldName = $fieldName;
         $this->className = $className;

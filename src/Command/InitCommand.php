@@ -7,7 +7,6 @@ use Kiboko\Component\AkeneoProductValues\CodeGenerator\BundleCodeGenerator;
 use Kiboko\Component\AkeneoProductValues\CodeGenerator\Extension\ExtensionFileLoaderInstanciationCodeGenerator;
 use Kiboko\Component\AkeneoProductValues\CodeGenerator\Extension\ExtensionYamlFileLoadingCodeGenerator;
 use Kiboko\Component\AkeneoProductValues\CodeGenerator\ExtensionCodeGenerator;
-use League\Flysystem\Filesystem;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Helper\QuestionHelper;

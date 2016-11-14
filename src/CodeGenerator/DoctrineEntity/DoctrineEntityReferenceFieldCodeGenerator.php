@@ -33,10 +33,10 @@ class DoctrineEntityReferenceFieldCodeGenerator implements Builder
      * ProductValueScalarFieldCodeGenerator constructor.
      * @param string $fieldName
      * @param string $className
-     * @param string $namespace
+     * @param string|null $namespace
      * @param AnnotationGeneratorInterface[] $doctrineAnnotationGenerators
      */
-    public function __construct($fieldName, $className, $namespace, $doctrineAnnotationGenerators)
+    public function __construct($fieldName, $className, $namespace = null, $doctrineAnnotationGenerators = [])
     {
         $this->fieldName = $fieldName;
         $this->className = $className;
@@ -131,6 +131,10 @@ class DoctrineEntityReferenceFieldCodeGenerator implements Builder
         $annotations = [
             '@param '.$this->className,
         ];
+
+        if (count($this->doctrineAnnotationGenerators) > 0) {
+            $annotations[] = '';
+        }
 
         foreach ($this->doctrineAnnotationGenerators as $generator) {
             $annotations[] = $generator->getAnnotation();

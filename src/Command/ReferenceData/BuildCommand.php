@@ -87,7 +87,7 @@ class BuildCommand extends Command implements FilesystemAwareInterface
         $productValueClass = new ProductValueCodeGenerator('ProductValue', $namespace . '\\Model');
 
         $productValueClass->addInternalField(
-            (new DoctrineEntityScalarFieldCodeGenerator('color', 'string',
+            (new DoctrineEntityScalarFieldCodeGenerator('colorCode', 'string',
                 [
                     new DoctrineColumnAnnotationGenerator('string'),
                     new UnparameteredDoctrineAnnotationGenerator('Id'),
@@ -96,7 +96,7 @@ class BuildCommand extends Command implements FilesystemAwareInterface
             ))
         );
 
-        $productValueClass->addMethod(
+        $productValueClass->addInternalField(
             (new DoctrineEntityReferenceFieldCodeGenerator('color', 'Color', $namespace . '\\Model',
                 [
                     new DoctrineOneToManyAnnotationGenerator()
