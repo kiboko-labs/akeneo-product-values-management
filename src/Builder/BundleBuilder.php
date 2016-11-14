@@ -33,6 +33,7 @@ class BundleBuilder
     public function __construct()
     {
         $this->fileDefinitions = [];
+        $this->configDefinitions = [];
     }
 
     /**
