@@ -24,14 +24,14 @@ class CommandProvider implements CommandProviderCapability
 //                new Command\ReferenceData\AddCommand(),
 //                $filesystem
 //            ),
-            new DecoratedCommand(
-                new Command\ReferenceData\RemoveCommand(),
-                $filesystem
-            ),
 //            new DecoratedCommand(
-//                new Command\ReferenceData\BuildCommand(),
+//                new Command\ReferenceData\RemoveCommand(),
 //                $filesystem
 //            ),
+            new DecoratedCommand(
+                new Command\ReferenceData\BuildCommand(),
+                $filesystem
+            ),
         ];
     }
 }
