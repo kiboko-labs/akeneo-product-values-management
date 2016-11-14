@@ -28,23 +28,6 @@ class BundleBuilder
     private $configDefinitions;
 
     /**
-     * @var self
-     */
-    private static $singleton;
-
-    /**
-     * @return BundleBuilder
-     */
-    public static function getInstance()
-    {
-        if (self::$singleton === null) {
-            self::$singleton = new self;
-        }
-
-        return self::$singleton;
-    }
-
-    /**
      * @param RuleInterface $rule
      */
     public function registerRule(RuleInterface $rule)
@@ -90,6 +73,18 @@ class BundleBuilder
      */
     public function setConfigFile($filePath, array $definition)
     {
+        $this->configDefinitions[$filePath] = $definition;
+    }
+
+    /**
+     * @param $filePath
+     * @param array $definition
+     */
+    public function mergeConfigFile($filePath, array $definition)
+    {
+        if (isset($this->configDefinitions[$filePath])) {
+
+        }
         $this->configDefinitions[$filePath] = $definition;
     }
 
