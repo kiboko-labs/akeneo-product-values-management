@@ -28,6 +28,31 @@ class BundleBuilder
     private $configDefinitions;
 
     /**
+     * @var self
+     */
+    private static $singleton;
+
+    /**
+     * @return BundleBuilder
+     */
+    public static function getInstance()
+    {
+        if (self::$singleton === null) {
+            self::$singleton = new self;
+        }
+
+        return self::$singleton;
+    }
+
+    /**
+     * @param RuleInterface $rule
+     */
+    public function registerRule(RuleInterface $rule)
+    {
+        $rule->applyTo($this);
+    }
+
+    /**
      * BundleBuilder constructor.
      */
     public function __construct()
