@@ -18,11 +18,6 @@ class CommandProvider implements CommandProviderCapability
     private $composer;
 
     /**
-     * @var IOInterface
-     */
-    private $io;
-
-    /**
      * CommandProvider constructor.
      * @param array $args
      */
