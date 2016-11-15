@@ -36,7 +36,7 @@ class ListCommand extends Command implements FilesystemAwareInterface, ComposerA
 
         $rulesList = $this->listRules();
         array_walk($rulesList, function(RuleInterface &$current) {
-            $current = $current->getName();
+            $current = sprintf('%s [%s]', $current->getName(), $current->getReferenceClass());
         });
 
         $output->writeln(
