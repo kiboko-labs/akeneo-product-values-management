@@ -18,6 +18,7 @@ use Symfony\Component\Console\Question\Question;
 class InitCommand extends Command implements FilesystemAwareInterface
 {
     use FilesystemAwareTrait;
+    use ComposerAwareTrait;
 
     protected function configure()
     {
@@ -35,29 +36,9 @@ class InitCommand extends Command implements FilesystemAwareInterface
         /** @var QuestionHelper $questionHelper */
         $questionHelper = $this->getHelper('question');
 
-        $question = new Question($formatterHelper->formatSection(
-            'Create your App bundle',
-            'Please enter the vendor namespace of the bundle to create (leave empty for not using namespace)' . PHP_EOL,
-            'info'
-        ));
-        $vendor = $questionHelper->ask($input, $output, $question);
-
-        $question = new Question($formatterHelper->formatSection(
-            'Create your App bundle',
-            'Please enter the full name of the bundle to create' . PHP_EOL,
-            'info'
-        ), 'AppBundle');
-        $question->setAutocompleterValues(['AppBundle']);
-        $question->setValidator(function ($answer) {
-            if ('Bundle' !== substr($answer, -6)) {
-                throw new \RuntimeException(
-                    'The name of the bundle should be suffixed with \'Bundle\''
-                );
-            }
-            return $answer;
-        });
-        $question->setMaxAttempts(2);
-        $bundle = $questionHelper->ask($input, $output, $question);
+        $vendor = $this->getComposer()->getConfig()->get('akeneo-appbundle-vendor-name') ?: null;
+        $bundle = $this->getComposer()->getConfig()->get('akeneo-appbundle-bundle-name') ?: 'AppBundle';
+        $root = $this->getComposer()->getConfig()->get('akeneo-appbundle-root-dir') ?: 'src';
 
         $className = $vendor . $bundle;
         if ($vendor === '') {
@@ -80,7 +61,7 @@ class InitCommand extends Command implements FilesystemAwareInterface
 
         $question = new ConfirmationQuestion($formatterHelper->formatSection(
             'Create your App bundle',
-            sprintf('Create %1$s bundle in src/%1$s? [Y/n]', $bundle),
+            sprintf('Create %1$s bundle in %2$s/%1$s? [Y/n]', $bundle, $root),
             'info'
         ), true);
         if (!$questionHelper->ask($input, $output, $question)) {
@@ -113,7 +94,7 @@ class InitCommand extends Command implements FilesystemAwareInterface
             'parameters' => [],
             'services' => [],
         ]);
-        $builder->initialize($this->getFilesystem(), 'src/' . $path);
-        $builder->generate($this->getFilesystem(), 'src/' . $path);
+        $builder->initialize($this->getFilesystem(), $root . '/' . $path);
+        $builder->generate($this->getFilesystem(), $root . '/' . $path);
     }
 }
