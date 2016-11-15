@@ -7,7 +7,6 @@ use Composer\Composer;
 use Kiboko\Component\AkeneoProductValues\Command\ComposerAwareInterface;
 use Kiboko\Component\AkeneoProductValues\Command\FilesystemAwareInterface;
 use Kiboko\Component\AkeneoProductValues\Command\FilesystemAwareTrait;
-use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
@@ -15,7 +14,7 @@ use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class DecoratedCommand extends BaseCommand implements FilesystemAwareInterface, ComposerAwareInterface
+class DecoratedCommand extends BaseCommand implements FilesystemAwareInterface
 {
     use FilesystemAwareTrait;
 
@@ -30,7 +29,7 @@ class DecoratedCommand extends BaseCommand implements FilesystemAwareInterface, 
      * @param Command $decorated
      * @param Filesystem $filesystem
      */
-    public function __construct(Command $decorated, Filesystem $filesystem)
+    public function __construct(Command $decorated, Filesystem $filesystem, Composer $composer)
     {
         $this->decorated = $decorated;
 
@@ -46,7 +45,7 @@ class DecoratedCommand extends BaseCommand implements FilesystemAwareInterface, 
             $this->decorated->setFilesystem($filesystem);
         }
         if ($this->decorated instanceof ComposerAwareInterface) {
-            $this->decorated->setComposer($this->getComposer());
+            $this->decorated->setComposer($composer);
         }
     }
 

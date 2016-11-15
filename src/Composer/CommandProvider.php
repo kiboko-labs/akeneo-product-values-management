@@ -3,6 +3,7 @@
 namespace Kiboko\Component\AkeneoProductValues\Composer;
 
 use Composer\Composer;
+use Composer\IO\IOInterface;
 use Composer\Plugin\Capability\CommandProvider as CommandProviderCapability;
 use Kiboko\Component\AkeneoProductValues\Builder\RuleInterface;
 use Kiboko\Component\AkeneoProductValues\Command;
@@ -11,6 +12,27 @@ use League\Flysystem\Filesystem;
 
 class CommandProvider implements CommandProviderCapability
 {
+    /**
+     * @var Composer
+     */
+    private $composer;
+
+    /**
+     * @var IOInterface
+     */
+    private $io;
+
+    /**
+     * CommandProvider constructor.
+     * @param Composer $composer
+     * @param IOInterface $io
+     */
+    public function __construct(Composer $composer, IOInterface $io)
+    {
+        $this->composer = $composer;
+        $this->io = $io;
+    }
+
     public function getCommands()
     {
         $filesystem = new Filesystem(
@@ -20,29 +42,34 @@ class CommandProvider implements CommandProviderCapability
         return [
             new DecoratedCommand(
                 new Command\InitCommand(),
-                $filesystem
+                $filesystem,
+                $this->composer
             ),
 //            new DecoratedCommand(
 //                new Command\ReferenceData\AddCommand(
 //                    null,
 //                    $this->listRules()
 //                ),
-//                $filesystem
+//                $filesystem,
+//                $this->composer
 //            ),
 //            new DecoratedCommand(
 //                new Command\ReferenceData\RemoveCommand(
 //                    null,
 //                    $this->listRules()
 //                ),
-//                $filesystem
+//                $filesystem,
+//                $this->composer
 //            ),
             new DecoratedCommand(
                 new Command\ReferenceData\ListCommand(),
-                $filesystem
+                $filesystem,
+                $this->composer
             ),
             new DecoratedCommand(
                 new Command\ReferenceData\BuildCommand(),
-                $filesystem
+                $filesystem,
+                $this->composer
             ),
         ];
     }
