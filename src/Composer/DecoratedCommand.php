@@ -35,11 +35,14 @@ class DecoratedCommand extends BaseCommand implements FilesystemAwareInterface
 
         parent::__construct($decorated->getName());
 
-        $this->setName($decorated->getName())
+        $this
+            ->setComposer($composer)
+            ->setName($decorated->getName())
             ->setAliases($decorated->getAliases())
             ->setHelp($decorated->getHelp())
             ->setDescription($decorated->getDescription())
-            ->setDefinition($decorated->getDefinition());
+            ->setDefinition($decorated->getDefinition())
+        ;
 
         if ($this->decorated instanceof FilesystemAwareInterface) {
             $this->decorated->setFilesystem($filesystem);
@@ -56,6 +59,8 @@ class DecoratedCommand extends BaseCommand implements FilesystemAwareInterface
         if ($this->decorated instanceof ComposerAwareInterface) {
             $this->decorated->setComposer($composer);
         }
+
+        return $this;
     }
 
     /**
