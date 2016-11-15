@@ -14,6 +14,8 @@ use Kiboko\Component\AkeneoProductValues\CodeGenerator\DoctrineEntity\DoctrineEn
 use Kiboko\Component\AkeneoProductValues\CodeGenerator\DoctrineEntity\DoctrineEntityScalarFieldGetMethodCodeGenerator;
 use Kiboko\Component\AkeneoProductValues\CodeGenerator\DoctrineEntity\DoctrineEntityScalarFieldSetMethodCodeGenerator;
 use Kiboko\Component\AkeneoProductValues\CodeGenerator\ProductValueCodeGenerator;
+use Kiboko\Component\AkeneoProductValues\Command\ComposerAwareInterface;
+use Kiboko\Component\AkeneoProductValues\Command\ComposerAwareTrait;
 use Kiboko\Component\AkeneoProductValues\Command\FilesystemAwareInterface;
 use Kiboko\Component\AkeneoProductValues\Command\FilesystemAwareTrait;
 use Symfony\Component\Console\Command\Command;
@@ -23,9 +25,10 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 
-class BuildCommand extends Command implements FilesystemAwareInterface
+class BuildCommand extends Command implements FilesystemAwareInterface, ComposerAwareInterface
 {
     use FilesystemAwareTrait;
+    use ComposerAwareTrait;
 
     protected function configure()
     {
