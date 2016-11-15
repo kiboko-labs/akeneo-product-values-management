@@ -34,9 +34,14 @@ class ListCommand extends Command implements FilesystemAwareInterface, ComposerA
         /** @var QuestionHelper $questionHelper */
         $questionHelper = $this->getHelper('question');
 
+        $rulesList = $this->listRules();
+        array_walk($rulesList, function(RuleInterface &$current) {
+            $current = $current->getName();
+        });
+
         $output->writeln(
             $formatterHelper->formatBlock(
-                $this->listRules(),
+                $rulesList,
                 'info'
             )
         );
