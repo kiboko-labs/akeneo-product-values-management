@@ -50,7 +50,7 @@ class ListCommand extends Command implements FilesystemAwareInterface, ComposerA
         /** @var RuleInterface[] $rules */
         $rules = [];
         foreach ($capabilities as $capability) {
-            $rules += $capability->getRules($this->composer);
+            $rules += $capability->getRules($this->getComposer());
         }
 
         return $rules;
