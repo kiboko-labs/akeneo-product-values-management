@@ -24,13 +24,15 @@ class CommandProvider implements CommandProviderCapability
 
     /**
      * CommandProvider constructor.
-     * @param Composer $composer
-     * @param IOInterface $io
+     * @param array $args
      */
-    public function __construct(Composer $composer, IOInterface $io)
+    public function __construct(array $args)
     {
-        $this->composer = $composer;
-        $this->io = $io;
+        if (!$args['composer'] instanceof Composer) {
+            throw new \RuntimeException('Expected a "composer" key');
+        }
+
+        $this->composer = $args['composer'];
     }
 
     public function getCommands()
