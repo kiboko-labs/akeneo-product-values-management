@@ -42,30 +42,11 @@ class BuildCommand extends Command implements FilesystemAwareInterface
         /** @var QuestionHelper $questionHelper */
         $questionHelper = $this->getHelper('question');
 
-        $question = new Question($formatterHelper->formatSection(
-            'Create your App bundle',
-            'Please enter the vendor namespace of the bundle to create (leave empty for not using namespace)' . PHP_EOL,
-            'info'
-        ));
-        $vendor = $questionHelper->ask($input, $output, $question);
+        $vendor = $this->getComposer()->getConfig()->get('akeneo-appbundle-vendor-name') ?: null;
+        $bundle = $this->getComposer()->getConfig()->get('akeneo-appbundle-bundle-name') ?: 'AppBundle';
+        $root = $this->getComposer()->getConfig()->get('akeneo-appbundle-root-dir') ?: 'src';
 
-        $question = new Question($formatterHelper->formatSection(
-            'Create your App bundle',
-            'Please enter the full name of the bundle to create' . PHP_EOL,
-            'info'
-        ), 'AppBundle');
-        $question->setAutocompleterValues(['AppBundle']);
-        $question->setValidator(function ($answer) {
-            if ('Bundle' !== substr($answer, -6)) {
-                throw new \RuntimeException(
-                    'The name of the bundle should be suffixed with \'Bundle\''
-                );
-            }
-            return $answer;
-        });
-        $question->setMaxAttempts(2);
-        $bundle = $questionHelper->ask($input, $output, $question);
-
+        $className = $vendor . $bundle;
         if ($vendor === '') {
             $namespace = $bundle;
             $path = $bundle . '/';
@@ -132,13 +113,12 @@ class BuildCommand extends Command implements FilesystemAwareInterface
         $productValueClass->addUseStatement($namespace . '\\Model\\Color');
 
         $builder = new BundleBuilder();
-        $builder->setFileDefinition('Model/ProductValue.php',
+        $builder->setFileDefinition('Entity/ProductValue.php',
             [
                 $productValueClass->getNode()
             ]
         );
-
-        $builder->initialize($this->getFilesystem(), 'src/' . $path);
-        $builder->generate($this->getFilesystem(), 'src/' . $path);
+        $builder->initialize($this->getFilesystem(), $root . '/' . $path);
+        $builder->generate($this->getFilesystem(), $root . '/' . $path);
     }
 }

@@ -50,6 +50,7 @@ class InitCommand extends Command implements FilesystemAwareInterface, ComposerA
 
         $output->writeln($formatterHelper->formatBlock(
             [
+                'Confirm building the custom Bundle:',
                 'Your vendor namespace: ' . $vendor,
                 'Your bundle name: ' . $className,
                 'Your bundle class FQN: ' . $namespace . '\\' . $className,

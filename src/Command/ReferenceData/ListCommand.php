@@ -10,7 +10,6 @@ use Kiboko\Component\AkeneoProductValues\Command\FilesystemAwareTrait;
 use Kiboko\Component\AkeneoProductValues\Composer\RuleCapability;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\FormatterHelper;
-use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -31,8 +30,6 @@ class ListCommand extends Command implements FilesystemAwareInterface, ComposerA
     {
         /** @var FormatterHelper $formatterHelper */
         $formatterHelper = $this->getHelper('formatter');
-        /** @var QuestionHelper $questionHelper */
-        $questionHelper = $this->getHelper('question');
 
         $rulesList = $this->listRules();
         array_walk($rulesList, function(RuleInterface &$current) {
