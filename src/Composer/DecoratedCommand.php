@@ -15,7 +15,7 @@ use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class DecoratedCommand extends BaseCommand implements FilesystemAwareInterface
+class DecoratedCommand extends BaseCommand implements FilesystemAwareInterface, ComposerAwareInterface
 {
     use FilesystemAwareTrait;
 
@@ -44,6 +44,9 @@ class DecoratedCommand extends BaseCommand implements FilesystemAwareInterface
 
         if ($this->decorated instanceof FilesystemAwareInterface) {
             $this->decorated->setFilesystem($filesystem);
+        }
+        if ($this->decorated instanceof ComposerAwareInterface) {
+            $this->decorated->setComposer($this->getComposer());
         }
     }
 
