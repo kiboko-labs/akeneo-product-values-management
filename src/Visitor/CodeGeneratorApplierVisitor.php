@@ -78,7 +78,7 @@ class CodeGeneratorApplierVisitor extends NodeVisitorAbstract
         $this->applyPropertyCodeGenerators($class);
         $this->applyMethodCodeGenerators($class);
 
-        return $class;
+        return $class->getNode();
     }
 
     /**

@@ -37,7 +37,8 @@ class ClassDiscoveryVisitor extends NodeVisitorAbstract
             if ($node instanceof Node\Name\FullyQualified) {
                 $classFQN = $node->name->toString();
             } else {
-                $classFQN = $this->namespace . '\\' . $node->name->toString();
+                var_dump($node->name);
+                //$classFQN = $this->namespace . '\\' . $node->name->toString();
             }
 
             $this->classes[$classFQN] = $node;
