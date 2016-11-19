@@ -34,6 +34,11 @@ class BundleBuilder
     private $classDefinitions;
 
     /**
+     * @var NodeVisitor[]|\SplObjectStorage
+     */
+    private $pendingClassVisitor;
+
+    /**
      * BundleBuilder constructor.
      */
     public function __construct()
@@ -43,6 +48,7 @@ class BundleBuilder
         );
         $this->configDefinitions = [];
         $this->classDefinitions = [];
+        $this->pendingClassVisitor = new \SplObjectStorage();
     }
 
     /**
@@ -155,6 +161,12 @@ class BundleBuilder
             $traverser->addVisitor($visitor);
         }
 
+        if (!isset($this->classDefinitions[$classFQN])) {
+            throw new \RuntimeException(sprintf(
+                'The class %s is not yet defined, please define the class before trying to modify it.',
+                $classFQN
+            ));
+        }
         $traverser->traverse(
             [
                 $this->classDefinitions[$classFQN]
