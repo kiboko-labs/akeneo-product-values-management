@@ -67,7 +67,7 @@ class BundleBuilder
     {
         $prettyPrinter = new PrettyPrinter\Standard();
 
-        foreach ($this->fileDefinitions as $filePath => $nodes) {
+        foreach ($this->fileDeclarationRepository->findAll() as $filePath => $nodes) {
             $filesystem->createDir(dirname($rootPath . '/' . $filePath));
 
             $filesystem->put(
@@ -107,7 +107,7 @@ class BundleBuilder
             $root = $parser->parse($filesystem->read($file->getPath()));
 
             $this->fileDeclarationRepository->add(
-                preg_replace('#^' . preg_quote($rootPath) . '#', '', $file->getPath()),
+                preg_replace('#^' . preg_quote($rootPath) . '/?#', '', $file->getPath()),
                 $root
             );
         }
@@ -160,6 +160,22 @@ class BundleBuilder
                 $this->classDefinitions[$classFQN]
             ]
         );
+    }
+
+    /**
+     * @param string $path
+     * @param string $classFQN
+     * @param Node[] $definition
+     */
+    public function mergeClassDefinition($path, $classFQN, array $definition)
+    {
+        $existingDefinition = $this->fileDeclarationRepository->findOneClassByName($classFQN);
+        if ($existingDefinition === null) {
+            $this->fileDeclarationRepository->add($path, $definition);
+            return;
+        }
+
+        throw new \RuntimeException('Class merge is not yet implemented.');
     }
 
     /**

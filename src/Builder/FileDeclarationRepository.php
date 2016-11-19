@@ -41,6 +41,9 @@ class FileDeclarationRepository
      */
     public function __construct(ClassDiscoveryVisitor $classDiscoveryVisitor)
     {
+        $this->classIndex = [];
+        $this->fileDeclarations = [];
+        $this->classDeclarations = [];
         $this->traverser = new NodeTraverser();
         $this->traverser->addVisitor($classDiscoveryVisitor);
 
@@ -59,7 +62,7 @@ class FileDeclarationRepository
 
         $discovered = $this->classDiscoveryVisitor->dump();
         $this->classDeclarations += $discovered;
-        $this->classIndex += array_combine($discovered, array_pad([], $path, count($discovered)));
+        $this->classIndex += array_combine(array_keys($discovered), array_pad([], count($discovered), $path));
     }
 
     /**
@@ -73,5 +76,10 @@ class FileDeclarationRepository
         }
 
         return $this->classDeclarations[$classFQN];
+    }
+
+    public function findAll()
+    {
+        return $this->fileDeclarations;
     }
 }
