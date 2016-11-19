@@ -8,6 +8,7 @@ use Kiboko\Component\AkeneoProductValues\Command\ComposerAwareTrait;
 use Kiboko\Component\AkeneoProductValues\Command\FilesystemAwareInterface;
 use Kiboko\Component\AkeneoProductValues\Command\FilesystemAwareTrait;
 use Kiboko\Component\AkeneoProductValues\Composer\RuleCapability;
+use Kiboko\Component\AkeneoProductValues\Composer\RulesRepository;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Input\InputInterface;
@@ -31,7 +32,7 @@ class ListCommand extends Command implements FilesystemAwareInterface, ComposerA
         /** @var FormatterHelper $formatterHelper */
         $formatterHelper = $this->getHelper('formatter');
 
-        $rulesList = $this->listRules();
+        $rulesList = $this->getRules();
         array_walk($rulesList, function(RuleInterface &$current) {
             $current = sprintf('%s [%s]', $current->getName(), $current->getReferenceClass());
         });
@@ -44,17 +45,13 @@ class ListCommand extends Command implements FilesystemAwareInterface, ComposerA
         );
     }
 
-    private function listRules()
+    private function getRules()
     {
-        /** @var RuleCapability[] $capabilities */
-        $capabilities = $this->getComposer()->getPluginManager()->getPluginCapabilities(RuleCapability::class);
+        $rulesRepository = new RulesRepository(
+            $this->getComposer(),
+            $this->getComposer()->getPluginManager()
+        );
 
-        /** @var RuleInterface[] $rules */
-        $rules = [];
-        foreach ($capabilities as $capability) {
-            $rules += $capability->getRules($this->getComposer());
-        }
-
-        return $rules;
+        return $rulesRepository->findAll();
     }
 }

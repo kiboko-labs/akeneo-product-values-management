@@ -87,9 +87,7 @@ class DoctrineEntityScalarFieldGetMethodCodeGenerator implements Builder
             ->setDocComment($this->compileDocComment())
         ;
 
-        if ($this->useStrictTyping === true ||
-            !in_array($this->typeHint, ['array', 'callable', 'string', 'int', 'float', 'bool', 'self'])
-        ) {
+        if ($this->useStrictTyping === true) {
             $root->setReturnType($this->typeHint);
         }
 

@@ -5,17 +5,26 @@
     "require": {
         "composer-plugin-api": "^1.0",
         "nikic/php-parser": "^2.1",
-        "symfony/console": "^3.1",
+        "symfony/console": "^2.7.0",
         "league/flysystem": "^1.0",
-        "doctrine/annotations": "^1.3",
-        "symfony/yaml": "^3.1"
+        "doctrine/annotations": "^1.2.0",
+        "symfony/yaml": "^2.7.0"
     },
     "require-dev": {
-        "composer/composer": "^1.0"
+        "composer/composer": "^1.0",
+        "akeneo/pim-community-dev": "1.6.4",
+        "akeneo-labs/custom-entity-bundle": "1.8.*"
     },
     "extra": {
         "class": "Kiboko\\Component\\AkeneoProductValues\\Composer\\ProductValuePlugin"
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/akeneo/pim-community-dev.git",
+            "branch": "master"
+        }
+    ],
     "license": "lgpl",
     "authors": [
         {

@@ -126,8 +126,6 @@ class DoctrineEntityReferenceFieldSetMethodCodeGenerator implements Builder
             )
         ;
 
-        var_dump($assign);
-
         return $root->getNode();
     }
 

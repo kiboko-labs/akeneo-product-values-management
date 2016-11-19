@@ -42,19 +42,13 @@ class CommandProvider implements CommandProviderCapability
                 $filesystem,
                 $this->composer
             ),
+            new DecoratedCommand(
+                new Command\ReferenceData\AddCommand(),
+                $filesystem,
+                $this->composer
+            ),
 //            new DecoratedCommand(
-//                new Command\ReferenceData\AddCommand(
-//                    null,
-//                    $this->listRules()
-//                ),
-//                $filesystem,
-//                $this->composer
-//            ),
-//            new DecoratedCommand(
-//                new Command\ReferenceData\RemoveCommand(
-//                    null,
-//                    $this->listRules()
-//                ),
+//                new Command\ReferenceData\RemoveCommand(),
 //                $filesystem,
 //                $this->composer
 //            ),

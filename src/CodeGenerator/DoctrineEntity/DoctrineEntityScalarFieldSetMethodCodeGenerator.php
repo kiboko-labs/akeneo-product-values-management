@@ -84,7 +84,7 @@ class DoctrineEntityScalarFieldSetMethodCodeGenerator implements Builder
 
         $param = $factory->param($this->fieldName);
         if ($this->useStrictTyping === true ||
-            !in_array($this->typeHint, ['array', 'callable', 'string', 'int', 'float', 'bool', 'self'])
+            !in_array($this->typeHint, ['string', 'int', 'float', 'bool'])
         ) {
             $param->setTypeHint($this->typeHint);
         }
