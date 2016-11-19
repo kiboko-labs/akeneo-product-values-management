@@ -2,6 +2,8 @@
 
 namespace Kiboko\Component\AkeneoProductValues\Command\ReferenceData;
 
+use Kiboko\Component\AkeneoProductValues\Builder\BundleBuilder;
+use Kiboko\Component\AkeneoProductValues\Builder\RuleInterface;
 use Kiboko\Component\AkeneoProductValues\Command\FilesystemAwareInterface;
 use Kiboko\Component\AkeneoProductValues\Command\FilesystemAwareTrait;
 use Kiboko\Component\AkeneoProductValues\Command\ComposerAwareInterface;
@@ -30,6 +32,12 @@ class AddCommand extends Command implements FilesystemAwareInterface, ComposerAw
             InputArgument::REQUIRED,
             'The new property\'s type'
         );
+
+        $this->addArgument(
+            'field',
+            InputArgument::REQUIRED,
+            'The new property\'s field name'
+        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -37,17 +45,37 @@ class AddCommand extends Command implements FilesystemAwareInterface, ComposerAw
         /** @var FormatterHelper $formatterHelper */
         $formatterHelper = $this->getHelper('formatter');
 
-        $vendor = $this->getComposer()->getConfig()->get('akeneo-appbundle-vendor-name') ?: null;
-        $bundle = $this->getComposer()->getConfig()->get('akeneo-appbundle-bundle-name') ?: 'AppBundle';
         $root = $this->getComposer()->getConfig()->get('akeneo-appbundle-root-dir') ?: 'src';
 
-        if ($vendor === '') {
-            $namespace = $bundle;
-            $path = $bundle . '/';
-        } else {
-            $namespace = $vendor . '\\Bundle\\' . $bundle;
-            $path = $vendor . '/Bundle/' . $bundle . '/';
+        $ruleName = $input->getArgument('rule');
+        /** @var RuleInterface $rule */
+        if (($rule = $this->getRule($ruleName)) === null) {
+            $output->writeln(
+                $formatterHelper->formatBlock(
+                    [
+                        sprintf('The rule "%s" was not found.', $ruleName),
+                        'Please check if you have properly required the related composer package'
+                    ],
+                    'error', true
+                )
+            );
+            return -1;
         }
+
+        $bundleBuilder = new BundleBuilder();
+        $bundleBuilder->initialize(
+            $this->getFilesystem(),
+            $root
+        );
+
+        $rule->interact();
+
+        $rule->applyTo($bundleBuilder);
+
+        $bundleBuilder->generate(
+            $this->getFilesystem(),
+            $root
+        );
     }
 
     private function getRule($name)

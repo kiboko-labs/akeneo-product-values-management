@@ -109,7 +109,6 @@ class DecoratedCommand extends BaseCommand implements FilesystemAwareInterface
     protected function configure()
     {
         parent::configure();
-        $this->decorated->configure();
     }
 
     /**
