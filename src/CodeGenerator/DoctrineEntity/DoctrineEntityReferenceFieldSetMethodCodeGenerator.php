@@ -107,7 +107,7 @@ class DoctrineEntityReferenceFieldSetMethodCodeGenerator implements Builder
 
         $param = $factory->param($this->fieldName);
         if ($this->useStrictTyping === true) {
-            $param->setTypeHint($this->className);
+            $param->setTypeHint($this->namespace.'\\'.$this->className);
         }
 
         if ($this->nullable === true) {
@@ -163,7 +163,7 @@ class DoctrineEntityReferenceFieldSetMethodCodeGenerator implements Builder
     protected function prepareAnnotations()
     {
         return [
-            '@param '.$this->className . ' $' . $this->fieldName,
+            '@param '.$this->namespace.'\\'.$this->className . ' $' . $this->fieldName,
         ];
     }
 }

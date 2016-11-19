@@ -129,7 +129,7 @@ class DoctrineEntityReferenceFieldCodeGenerator implements Builder
     protected function prepareAnnotations()
     {
         $annotations = [
-            '@param '.$this->className,
+            '@param '.$this->namespace.'\\'.$this->className,
         ];
 
         if (count($this->doctrineAnnotationGenerators) > 0) {

@@ -111,7 +111,7 @@ class DoctrineEntityReferenceFieldGetMethodCodeGenerator implements Builder
         ;
 
         if ($this->useStrictTyping === true) {
-            $root->setReturnType($this->className);
+            $root->setReturnType($this->namespace.'\\'.$this->className);
         }
 
         $root->addStmt(
@@ -157,7 +157,7 @@ class DoctrineEntityReferenceFieldGetMethodCodeGenerator implements Builder
     protected function prepareAnnotations()
     {
         return [
-            '@return '.$this->className,
+            '@return '.$this->namespace.'\\'.$this->className,
         ];
     }
 }
