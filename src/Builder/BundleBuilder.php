@@ -18,9 +18,9 @@ use Symfony\Component\Yaml\Yaml;
 class BundleBuilder
 {
     /**
-     * @var Class_[]
+     * @var FileDeclarationRepository
      */
-    private $fileDefinitions;
+    private $fileDeclarationRepository;
 
     /**
      * @var array
@@ -28,64 +28,18 @@ class BundleBuilder
     private $configDefinitions;
 
     /**
-     * @param RuleInterface $rule
+     * @var Class_[]
      */
-    public function registerRule(RuleInterface $rule)
-    {
-        $rule->applyTo($this);
-    }
+    private $classDefinitions;
 
     /**
      * BundleBuilder constructor.
      */
     public function __construct()
     {
-        $this->fileDefinitions = [];
+        $this->fileDeclarationRepository = new FileDeclarationRepository();
         $this->configDefinitions = [];
-    }
-
-    /**
-     * @param string $filePath
-     * @param Node[] $definition
-     */
-    public function setFileDefinition($filePath, array $definition)
-    {
-        $this->fileDefinitions[$filePath] = $definition;
-    }
-
-    /**
-     * @param string $filePath
-     * @param NodeVisitor[] $visitors
-     */
-    public function visitFileDefinition($filePath, array $visitors)
-    {
-        $traverser = new NodeTraverser();
-        foreach ($visitors as $visitor) {
-            $traverser->addVisitor($visitor);
-        }
-
-        $traverser->traverse($this->fileDefinitions[$filePath]);
-    }
-
-    /**
-     * @param $filePath
-     * @param array $definition
-     */
-    public function setConfigFile($filePath, array $definition)
-    {
-        $this->configDefinitions[$filePath] = $definition;
-    }
-
-    /**
-     * @param $filePath
-     * @param array $definition
-     */
-    public function mergeConfigFile($filePath, array $definition)
-    {
-        if (isset($this->configDefinitions[$filePath])) {
-
-        }
-        $this->configDefinitions[$filePath] = $definition;
+        $this->classDefinitions = [];
     }
 
     /**
@@ -124,7 +78,7 @@ class BundleBuilder
             $filesystem->createDir(dirname($rootPath . '/' . $filePath));
 
             $filesystem->put(
-                $rootPath . '/' . $filePath, $yamlDumper->dump($config, 5, 0, Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK)
+                $rootPath . '/' . $filePath, $yamlDumper->dump($config, 5, 0)
             );
         }
     }
@@ -148,7 +102,11 @@ class BundleBuilder
             }
 
             $root = $parser->parse($filesystem->read($file->getPath()));
-            $this->setFileDefinition(preg_replace('#^' . preg_quote($rootPath) . '#', '', $file->getPath()), $root);
+
+            $this->fileDeclarationRepository->add(
+                preg_replace('#^' . preg_quote($rootPath) . '#', '', $file->getPath()),
+                $root
+            );
         }
     }
 
@@ -173,5 +131,52 @@ class BundleBuilder
             $root = $parser->parse($filesystem->read($file->getPath()));
             $this->setConfigFile(preg_replace('#^' . preg_quote($rootPath) . '#', '', $file->getPath()), $root);
         }
+    }
+
+    /**
+     * @param RuleInterface $rule
+     */
+    public function registerRule(RuleInterface $rule)
+    {
+        $rule->applyTo($this);
+    }
+
+    /**
+     * @param string $filePath
+     * @param NodeVisitor[] $visitors
+     */
+    public function visitClassDefinition($filePath, array $visitors)
+    {
+        $traverser = new NodeTraverser();
+        foreach ($visitors as $visitor) {
+            $traverser->addVisitor($visitor);
+        }
+
+        $traverser->traverse(
+            [
+                $this->classDefinitions[$filePath]
+            ]
+        );
+    }
+
+    /**
+     * @param $filePath
+     * @param array $definition
+     */
+    private function setConfigFile($filePath, array $definition)
+    {
+        $this->configDefinitions[$filePath] = $definition;
+    }
+
+    /**
+     * @param $filePath
+     * @param array $definition
+     */
+    private function mergeConfigFile($filePath, array $definition)
+    {
+        if (isset($this->configDefinitions[$filePath])) {
+
+        }
+        $this->configDefinitions[$filePath] = $definition;
     }
 }

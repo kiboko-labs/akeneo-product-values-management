@@ -5,7 +5,7 @@ namespace Kiboko\Component\AkeneoProductValues\Visitor;
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
 
-class ClassFinderVisitor extends NodeVisitorAbstract
+class ClassDiscoveryVisitor extends NodeVisitorAbstract
 {
     /**
      * @var string
@@ -40,7 +40,7 @@ class ClassFinderVisitor extends NodeVisitorAbstract
                 $classFQN = $this->namespace . '\\' . $node->name->toString();
             }
 
-            $this->classes[] = $classFQN;
+            $this->classes[$classFQN] = $node;
         }
     }
 

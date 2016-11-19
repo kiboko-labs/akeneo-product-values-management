@@ -68,7 +68,7 @@ class AddCommand extends Command implements FilesystemAwareInterface, ComposerAw
             $root
         );
 
-        $rule->interact();
+        $rule->interact($input, $output, $this->getComposer());
 
         $rule->applyTo($bundleBuilder);
 
@@ -76,6 +76,8 @@ class AddCommand extends Command implements FilesystemAwareInterface, ComposerAw
             $this->getFilesystem(),
             $root
         );
+
+        return 0;
     }
 
     private function getRule($name)
