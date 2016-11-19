@@ -84,7 +84,7 @@ class CodeGeneratorApplierVisitor extends NodeVisitorAbstract
     /**
      * @param Builder $builder
      */
-    public function appendUseCodeGenerators(Builder $builder)
+    public function appendUseCodeGenerator(Builder $builder)
     {
         $this->traitUses[] = $builder;
     }
@@ -92,7 +92,7 @@ class CodeGeneratorApplierVisitor extends NodeVisitorAbstract
     /**
      * @param Builder $builder
      */
-    public function appendConstCodeGenerators(Builder $builder)
+    public function appendConstCodeGenerator(Builder $builder)
     {
         $this->constBuilders[] = $builder;
     }
@@ -100,7 +100,7 @@ class CodeGeneratorApplierVisitor extends NodeVisitorAbstract
     /**
      * @param Builder $builder
      */
-    public function appendPropertyCodeGenerators(Builder $builder)
+    public function appendPropertyCodeGenerator(Builder $builder)
     {
         $this->propertyBuilders[] = $builder;
     }
@@ -108,7 +108,7 @@ class CodeGeneratorApplierVisitor extends NodeVisitorAbstract
     /**
      * @param Builder $builder
      */
-    public function appendMethodCodeGenerators(Builder $builder)
+    public function appendMethodCodeGenerator(Builder $builder)
     {
         $this->methodBuilders[] = $builder;
     }
