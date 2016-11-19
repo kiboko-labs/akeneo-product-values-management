@@ -4,6 +4,7 @@ namespace Kiboko\Component\AkeneoProductValues\Builder;
 
 use Kiboko\Component\AkeneoProductValues\Filesystem\FileInfo;
 use Kiboko\Component\AkeneoProductValues\Filesystem\FilesystemIterator;
+use Kiboko\Component\AkeneoProductValues\Visitor\ClassDiscoveryVisitor;
 use League\Flysystem\Filesystem;
 use PhpParser\Builder\Class_;
 use PhpParser\Node;
@@ -37,7 +38,9 @@ class BundleBuilder
      */
     public function __construct()
     {
-        $this->fileDeclarationRepository = new FileDeclarationRepository();
+        $this->fileDeclarationRepository = new FileDeclarationRepository(
+            new ClassDiscoveryVisitor()
+        );
         $this->configDefinitions = [];
         $this->classDefinitions = [];
     }
@@ -142,10 +145,10 @@ class BundleBuilder
     }
 
     /**
-     * @param string $filePath
+     * @param string $classFQN
      * @param NodeVisitor[] $visitors
      */
-    public function visitClassDefinition($filePath, array $visitors)
+    public function visitClassDefinition($classFQN, array $visitors)
     {
         $traverser = new NodeTraverser();
         foreach ($visitors as $visitor) {
@@ -154,7 +157,7 @@ class BundleBuilder
 
         $traverser->traverse(
             [
-                $this->classDefinitions[$filePath]
+                $this->classDefinitions[$classFQN]
             ]
         );
     }
