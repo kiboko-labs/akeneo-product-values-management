@@ -166,18 +166,10 @@ class BundleBuilder
             ]
         );
 
-        foreach ($treatedNodeList as $classDefinition) {
-            if (!$classDefinition instanceof Node\Stmt\Class_) {
-                continue;
-            }
-
-            if ($classDefinition->name instanceof Node\Name) {
-                $newFQCN = $classDefinition->name->toString();
-            } else {
-                $newFQCN = $classDefinition->name;
-            }
-            $this->fileDeclarationRepository->replace($newFQCN, $classDefinition);
+        if (count($treatedNodeList) <= 0) {
+            return;
         }
+        $this->fileDeclarationRepository->replaceClass($classFQN, $treatedNodeList[0]);
     }
 
     /**
