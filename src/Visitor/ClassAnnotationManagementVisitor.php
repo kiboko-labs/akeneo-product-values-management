@@ -70,8 +70,6 @@ class AnnotationManagementVisitor extends NodeVisitorAbstract
 
         $lexer = new DocParser();
         $tokens = $lexer->parse($node->getDocComment());
-
-        var_dump($tokens);
     }
 
     /**

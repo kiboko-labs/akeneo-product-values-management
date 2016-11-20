@@ -45,7 +45,6 @@ class ProductValueCodeGenerator implements Builder
             'ORM' => 'Doctrine\\ORM\\Mapping',
             'PimProductValue' => 'Pim\\Component\\Catalog\\Model\\ProductValue',
         ];
-        var_dump($this->useStatements);
         $this->internalFields = [];
         $this->methods = [];
     }

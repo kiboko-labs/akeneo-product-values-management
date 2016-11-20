@@ -64,7 +64,6 @@ class BundleBuilder
         $prettyPrinter = new PrettyPrinter\Standard();
 
         foreach ($this->fileDeclarationRepository->findAll() as $filePath => $nodes) {
-            var_dump($filePath);
             $filesystem->createDir(dirname($rootPath . '/' . $filePath));
 
             $filesystem->put(
@@ -166,6 +165,11 @@ class BundleBuilder
         );
     }
 
+    /**
+     * @param string $classFQN
+     * @param string $filename
+     * @param Builder $builder
+     */
     public function ensureClassExists($classFQN, $filename, Builder $builder)
     {
         if ($this->fileDeclarationRepository->findOneClassByName($classFQN) !== null) {
