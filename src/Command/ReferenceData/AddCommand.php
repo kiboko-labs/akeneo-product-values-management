@@ -40,15 +40,7 @@ class AddCommand extends Command implements FilesystemAwareInterface, ComposerAw
         /** @var FormatterHelper $formatterHelper */
         $formatterHelper = $this->getHelper('formatter');
 
-        $vendor = $this->getComposer()->getConfig()->get('akeneo-appbundle-vendor-name') ?: null;
-        $bundle = $this->getComposer()->getConfig()->get('akeneo-appbundle-bundle-name') ?: 'AppBundle';
         $root = $this->getComposer()->getConfig()->get('akeneo-appbundle-root-dir') ?: 'src';
-
-        if ($vendor === '') {
-            $namespace = $bundle;
-        } else {
-            $namespace = $vendor . '\\Bundle\\' . $bundle;
-        }
 
         $ruleName = $input->getArgument('rule');
         /** @var RuleInterface $rule */
@@ -69,10 +61,6 @@ class AddCommand extends Command implements FilesystemAwareInterface, ComposerAw
         $bundleBuilder->initialize(
             $this->getFilesystem(),
             $root
-        );
-        $bundleBuilder->ensureClassExists(
-            $namespace.'\\ProductValue',
-            new ProductValueCodeGenerator('ProductValue', $namespace)
         );
         $rule->interact($input, $output, $this->getComposer());
 
