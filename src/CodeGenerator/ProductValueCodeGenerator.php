@@ -45,6 +45,7 @@ class ProductValueCodeGenerator implements Builder
             'ORM' => 'Doctrine\\ORM\\Mapping',
             'PimProductValue' => 'Pim\\Component\\Catalog\\Model\\ProductValue',
         ];
+        var_dump($this->useStatements);
         $this->internalFields = [];
         $this->methods = [];
     }
@@ -168,7 +169,6 @@ class ProductValueCodeGenerator implements Builder
         $factory = new BuilderFactory();
 
         $root = $factory->namespace($this->namespace);
-        sort($this->useStatements);
         foreach ($this->useStatements as $alias => $statement) {
             $use = $factory->use($statement);
             if (!is_numeric($alias)) {
@@ -177,7 +177,7 @@ class ProductValueCodeGenerator implements Builder
             $root->addStmt($use);
         }
 
-        $class = $factory->class($this->className)->extend('PimReferenceData');
+        $class = $factory->class($this->className)->extend('PimProductValue');
 
         foreach ($this->internalFields as $generator) {
             $class->addStmt($generator);
