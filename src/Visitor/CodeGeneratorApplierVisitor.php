@@ -50,6 +50,21 @@ class CodeGeneratorApplierVisitor extends NodeVisitorAbstract
     private $traitUseBuilders;
 
     /**
+     * CodeGeneratorApplierVisitor constructor.
+     */
+    public function __construct()
+    {
+        $this->consts = [];
+        $this->properties = [];
+        $this->methods = [];
+        $this->traitUses = [];
+        $this->constBuilders = [];
+        $this->propertyBuilders = [];
+        $this->methodBuilders = [];
+        $this->traitUseBuilders = [];
+    }
+
+    /**
      * @param Node $node
      * @return null
      */
@@ -124,23 +139,23 @@ class CodeGeneratorApplierVisitor extends NodeVisitorAbstract
         $this->methods = [];
 
         foreach ($node->stmts as $childNode) {
-            if ($node instanceof Node\Stmt\Const_) {
-                $this->consts[$node->name] = $node;
+            if ($childNode instanceof Node\Stmt\Const_) {
+                $this->consts[$node->name] = $childNode;
                 continue;
             }
 
-            if ($node instanceof Node\Stmt\Property) {
-                $this->properties[$node->name] = $node;
+            if ($childNode instanceof Node\Stmt\Property) {
+                $this->properties[$node->name] = $childNode;
                 continue;
             }
 
-            if ($node instanceof Node\Stmt\ClassMethod) {
-                $this->methods[$node->name] = $node;
+            if ($childNode instanceof Node\Stmt\ClassMethod) {
+                $this->methods[$node->name] = $childNode;
                 continue;
             }
 
-            if ($node instanceof Node\Stmt\TraitUse) {
-                $this->traitUses[$node->name] = $node;
+            if ($childNode instanceof Node\Stmt\TraitUse) {
+                $this->traitUses[$node->name] = $childNode;
                 continue;
             }
         }
