@@ -7,6 +7,7 @@ use Kiboko\Component\AkeneoProductValues\Filesystem\FileInfo;
 use Kiboko\Component\AkeneoProductValues\Filesystem\FilesystemIterator;
 use Kiboko\Component\AkeneoProductValues\Visitor\ClassDiscoveryVisitor;
 use League\Flysystem\Filesystem;
+use PhpParser\Builder;
 use PhpParser\Builder\Class_;
 use PhpParser\Node;
 use PhpParser\NodeTraverser;
@@ -169,15 +170,13 @@ class BundleBuilder
         );
     }
 
-    public function ensureProductValueClassExists($classFQN)
+    public function ensureClassExists($classFQN, Builder $builder)
     {
         if (isset($this->classDefinitions[$classFQN])) {
             return;
         }
 
-        $generator = new ProductValueCodeGenerator();
-
-        $this->classDefinitions[$classFQN] = $generator->getNode();
+        $this->classDefinitions[$classFQN] = $builder->getNode();
     }
 
     /**
