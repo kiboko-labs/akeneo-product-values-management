@@ -134,7 +134,7 @@ class DoctrineEntityScalarFieldGetMethodCodeGenerator implements Builder
     protected function prepareAnnotations()
     {
         return [
-            '@return '.$this->typeHint,
+            '@return \\'.$this->typeHint,
         ];
     }
 }

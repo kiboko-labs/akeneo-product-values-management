@@ -157,7 +157,7 @@ class DoctrineEntityReferenceFieldGetMethodCodeGenerator implements Builder
     protected function prepareAnnotations()
     {
         return [
-            '@return '.$this->namespace.'\\'.$this->className,
+            '@return \\'.$this->namespace.'\\'.$this->className,
         ];
     }
 }

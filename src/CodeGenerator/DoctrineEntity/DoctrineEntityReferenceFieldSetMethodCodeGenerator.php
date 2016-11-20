@@ -163,7 +163,7 @@ class DoctrineEntityReferenceFieldSetMethodCodeGenerator implements Builder
     protected function prepareAnnotations()
     {
         return [
-            '@param '.$this->namespace.'\\'.$this->className . ' $' . $this->fieldName,
+            '@param \\'.$this->namespace.'\\'.$this->className . ' $' . $this->fieldName,
         ];
     }
 }

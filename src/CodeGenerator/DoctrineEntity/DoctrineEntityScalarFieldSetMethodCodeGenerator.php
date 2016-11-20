@@ -142,7 +142,7 @@ class DoctrineEntityScalarFieldSetMethodCodeGenerator implements Builder
     protected function prepareAnnotations()
     {
         return [
-            '@param '.$this->typeHint . ' $' . $this->fieldName,
+            '@param \\'.$this->typeHint . ' $' . $this->fieldName,
         ];
     }
 }

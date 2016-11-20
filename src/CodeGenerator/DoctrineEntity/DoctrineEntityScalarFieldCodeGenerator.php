@@ -106,7 +106,7 @@ class DoctrineEntityScalarFieldCodeGenerator implements Builder
     protected function prepareAnnotations()
     {
         $annotations = [
-            '@param '.$this->typeHint,
+            '@param \\'.$this->typeHint,
         ];
 
         if (count($this->doctrineAnnotationGenerators) > 0) {
