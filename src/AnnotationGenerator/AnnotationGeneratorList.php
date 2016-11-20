@@ -16,6 +16,7 @@ class AnnotationGeneratorList implements AnnotationGeneratorListInterface
      */
     public function __construct(array $children)
     {
+        $this->children = [];
         $this->setChildren($children);
     }
 
@@ -55,7 +56,7 @@ class AnnotationGeneratorList implements AnnotationGeneratorListInterface
      */
     public function setChildren(array $children)
     {
-        foreach ($this->children as $child) {
+        foreach ($children as $child) {
             if (!$child instanceof AnnotationGeneratorInterface) {
                 continue;
             }
