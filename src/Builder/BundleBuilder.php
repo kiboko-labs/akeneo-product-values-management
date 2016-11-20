@@ -31,11 +31,6 @@ class BundleBuilder
     private $configDefinitions;
 
     /**
-     * @var Class_[]
-     */
-    private $classDefinitions;
-
-    /**
      * BundleBuilder constructor.
      */
     public function __construct()
@@ -44,7 +39,6 @@ class BundleBuilder
             new ClassDiscoveryVisitor()
         );
         $this->configDefinitions = [];
-        $this->classDefinitions = [];
     }
 
     /**
@@ -70,6 +64,7 @@ class BundleBuilder
         $prettyPrinter = new PrettyPrinter\Standard();
 
         foreach ($this->fileDeclarationRepository->findAll() as $filePath => $nodes) {
+            var_dump($filePath);
             $filesystem->createDir(dirname($rootPath . '/' . $filePath));
 
             $filesystem->put(
@@ -157,26 +152,27 @@ class BundleBuilder
             $traverser->addVisitor($visitor);
         }
 
-        if (!isset($this->classDefinitions[$classFQN])) {
+        if (($classDefinition = $this->fileDeclarationRepository->findOneClassByName($classFQN)) === null) {
             throw new \RuntimeException(sprintf(
                 'The class %s is not yet defined, please define the class before trying to modify it.',
                 $classFQN
             ));
         }
+
         $traverser->traverse(
             [
-                $this->classDefinitions[$classFQN]
+                $classDefinition
             ]
         );
     }
 
-    public function ensureClassExists($classFQN, Builder $builder)
+    public function ensureClassExists($classFQN, $filename, Builder $builder)
     {
-        if (isset($this->classDefinitions[$classFQN])) {
+        if ($this->fileDeclarationRepository->findOneClassByName($classFQN) !== null) {
             return;
         }
 
-        $this->classDefinitions[$classFQN] = $builder->getNode();
+        $this->fileDeclarationRepository->add($filename, [$builder->getNode()]);
     }
 
     /**
