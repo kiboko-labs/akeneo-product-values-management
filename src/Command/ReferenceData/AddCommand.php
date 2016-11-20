@@ -4,6 +4,7 @@ namespace Kiboko\Component\AkeneoProductValues\Command\ReferenceData;
 
 use Kiboko\Component\AkeneoProductValues\Builder\BundleBuilder;
 use Kiboko\Component\AkeneoProductValues\Builder\RuleInterface;
+use Kiboko\Component\AkeneoProductValues\CodeGenerator\ProductValueCodeGenerator;
 use Kiboko\Component\AkeneoProductValues\Command\FilesystemAwareInterface;
 use Kiboko\Component\AkeneoProductValues\Command\FilesystemAwareTrait;
 use Kiboko\Component\AkeneoProductValues\Command\ComposerAwareInterface;
@@ -69,7 +70,10 @@ class AddCommand extends Command implements FilesystemAwareInterface, ComposerAw
             $this->getFilesystem(),
             $root
         );
-        $bundleBuilder->ensureProductValueClassExists($namespace.'\\ProductValue');
+        $bundleBuilder->ensureClassExists(
+            $namespace.'\\ProductValue',
+            new ProductValueCodeGenerator('ProductValue', $namespace)
+        );
         $rule->interact($input, $output, $this->getComposer());
 
         $rule->applyTo($bundleBuilder);
