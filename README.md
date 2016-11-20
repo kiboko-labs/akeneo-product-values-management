@@ -7,26 +7,61 @@ This package is a composer plugin used to help you manage your Akeneo reference 
 
 ## Installation
 
-Just require the package in your installation
+Require the package in your installation :
 
 ```bash
-composer require "kiboko/akeneo-product-values-management=dev-master"
+composer require --dev "kiboko/akeneo-product-values-management=dev-master"
 ```
+
+Additionally, you will have to define the following parameters to your `composer.json`:
+
+```json
+    "config": {
+        "akeneo-appbundle-root-dir": "src",
+        "akeneo-appbundle-vendor-name": "Acme",
+        "akeneo-appbundle-bundle-name": "AppBundle"
+    }
+```
+
+## Available packages & reference datas
+
+| Package                         | Reference code       | Relation     | Type                                                         |
+|---------------------------------|----------------------|--------------|-------------------------------------------------------------|
+| `kiboko/akeneo-reference-datas` | `color.rgb.single`   | `ManyToOne`  | `Kiboko\Component\AkeneoProductValuesPackage\Model\ColorRGB` |
+| `kiboko/akeneo-reference-datas` | `color.rgb.multiple` | `ManyToMany` | `Kiboko\Component\AkeneoProductValuesPackage\Model\ColorRGB` |
+
+For now, the only package available is `kiboko/akeneo-reference-datas`
 
 ## Usage
 
 ### Initialize your `AppBundle`
 
-Just run the following command and follow the instructions:
+Run the following command to build your bundle:
 
 ```bash
 composer akeneo:init
 ```
 
-### Initialize your `ProductValue`
+### List the available reference datas
 
-Just run the following command and follow the instructions:
+Run the following command to list the available reference datas.
 
 ```bash
-composer akeneo:reference-data:build
+composer akeneo:reference-data:list
+```
+
+### Add a `ManyToOne` relation with a `ColorRGB` in your `ProductValue`
+
+Run the following command to install the color reference data as a many to one (single select):
+
+```bash
+composer akeneo:reference-data:add color.rgb.many-to-one
+```
+
+### Add a `ManyToMany` relation with a `ColorRGB` in your `ProductValue`
+
+Run the following command to install the color reference data as a many to one (multiple select):
+
+```bash
+composer akeneo:reference-data:add color.rgb.many-to-many
 ```

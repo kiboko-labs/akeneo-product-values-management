@@ -80,21 +80,21 @@ class InitCommand extends Command implements FilesystemAwareInterface, ComposerA
         );
 
         $builder = new BundleBuilder();
-        $builder->setFileDefinition($className . '.php',
-            [
-                $bundleClass->getNode()
-            ]
+        $builder->initialize($this->getFilesystem(), $root . '/' . $path);
+        $builder->ensureClassExists(
+            $className . '.php',
+            $namespace.'\\'.$className,
+            $bundleClass
         );
-        $builder->setFileDefinition('DependencyInjection/' . $vendor . str_replace('Bundle', 'Extension', $bundle) . '.php',
-            [
-                $extensionClass->getNode()
-            ]
+        $builder->ensureClassExists(
+            'DependencyInjection/' . $vendor . str_replace('Bundle', 'Extension', $bundle) . '.php',
+            $namespace.'\\DependencyInjection\\'.$vendor.str_replace('Bundle', 'Extension', $bundle),
+            $extensionClass
         );
         $builder->setConfigFile('Resources/config/services.yml', [
             'parameters' => [],
             'services' => [],
         ]);
-        $builder->initialize($this->getFilesystem(), $root . '/' . $path);
         $builder->generate($this->getFilesystem(), $root . '/' . $path);
     }
 }

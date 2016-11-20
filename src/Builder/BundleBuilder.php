@@ -173,11 +173,11 @@ class BundleBuilder
     }
 
     /**
-     * @param string $classFQN
      * @param string $filename
+     * @param string $classFQN
      * @param Builder $builder
      */
-    public function ensureClassExists($classFQN, $filename, Builder $builder)
+    public function ensureClassExists($filename, $classFQN, Builder $builder)
     {
         if ($this->fileDeclarationRepository->findOneClassByName($classFQN) !== null) {
             return;
