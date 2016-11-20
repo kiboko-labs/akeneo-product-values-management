@@ -5,7 +5,7 @@ namespace Kiboko\Component\AkeneoProductValues\Visitor;
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
 
-class ClassDiscoveryVisitor extends NodeVisitorAbstract
+class ClassReplacementVisitor extends NodeVisitorAbstract
 {
     /**
      * @var string
@@ -13,9 +13,46 @@ class ClassDiscoveryVisitor extends NodeVisitorAbstract
     private $namespace;
 
     /**
-     * @var Node\Stmt\Class_[]
+     * @var string
      */
-    private $classes;
+    private $classFQN;
+
+    /**
+     * @var Node\Stmt\Class_
+     */
+    private $classDeclaration;
+
+    /**
+     * @return string
+     */
+    public function getClassFQN()
+    {
+        return $this->classFQN;
+    }
+
+    /**
+     * @param string $classFQN
+     */
+    public function setClassFQN($classFQN)
+    {
+        $this->classFQN = $classFQN;
+    }
+
+    /**
+     * @return Node\Stmt\Class_
+     */
+    public function getClassDeclaration()
+    {
+        return $this->classDeclaration;
+    }
+
+    /**
+     * @param Node\Stmt\Class_ $classDeclaration
+     */
+    public function setClassDeclaration($classDeclaration)
+    {
+        $this->classDeclaration = $classDeclaration;
+    }
 
     /**
      * @param array $nodes
@@ -24,8 +61,9 @@ class ClassDiscoveryVisitor extends NodeVisitorAbstract
      */
     public function beforeTraverse(array $nodes)
     {
-        $this->namespace = null;
-        $this->classes = [];
+        if ($this->classFQN === null || $this->classDeclaration === null) {
+            throw new \RuntimeException('The class name and class declaration were not previously declared.');
+        }
     }
 
     /**
@@ -53,7 +91,11 @@ class ClassDiscoveryVisitor extends NodeVisitorAbstract
             $classFQN = $this->namespace.'\\'.$node->name;
         }
 
-        $this->classes[$classFQN] = $node;
+        if ($classFQN !== $this->classFQN) {
+            return;
+        }
+
+        return $this->classDeclaration;
     }
 
     /**
@@ -62,14 +104,5 @@ class ClassDiscoveryVisitor extends NodeVisitorAbstract
     private function resetState(Node\Name $namespace = null)
     {
         $this->namespace = $namespace->toString();
-        $this->classes = [];
-    }
-
-    /**
-     * @return Node\Stmt\Class_[]
-     */
-    public function dump()
-    {
-        return $this->classes;
     }
 }

@@ -66,7 +66,7 @@ class CodeGeneratorApplierVisitor extends NodeVisitorAbstract
 
     /**
      * @param Node $node
-     * @return null
+     * @return null|Node
      */
     public function enterNode(Node $node)
     {

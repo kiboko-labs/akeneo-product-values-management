@@ -158,11 +158,24 @@ class BundleBuilder
             ));
         }
 
-        $traverser->traverse(
+        $treatedNodeList = $traverser->traverse(
             [
                 $classDefinition
             ]
         );
+
+        foreach ($treatedNodeList as $classDefinition) {
+            if (!$classDefinition instanceof Node\Stmt\Class_) {
+                continue;
+            }
+
+            if ($classDefinition->name instanceof Node\Name) {
+                $newFQCN = $classDefinition->name->toString();
+            } else {
+                $newFQCN = $classDefinition->name;
+            }
+            $this->fileDeclarationRepository->replace($newFQCN, $classDefinition);
+        }
     }
 
     /**
