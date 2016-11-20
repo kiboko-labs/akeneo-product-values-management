@@ -7,5 +7,10 @@ interface AnnotationGeneratorInterface
     /**
      * @return string
      */
-    public function getAnnotation();
+    public function getAnnotationClass();
+
+    /**
+     * @param string $annotationClass
+     */
+    public function setAnnotationClass($annotationClass);
 }

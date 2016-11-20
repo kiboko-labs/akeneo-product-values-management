@@ -1,19 +1,24 @@
 <?php
 
+namespace Kiboko\Component\AkeneoProductValues\AnnotationGenerator\Doctrine;
 
-namespace Kiboko\Component\AkeneoProductValues\AnnotationGenerator;
+use Kiboko\Component\AkeneoProductValues\AnnotationGenerator\AnnotationGeneratorTrait;
+use Kiboko\Component\AkeneoProductValues\AnnotationGenerator\ParameterAwareTrait;
+use Kiboko\Component\AkeneoProductValues\AnnotationGenerator\ParameteredAnnotationGeneratorInterface;
 
-class DoctrineManyToOneAnnotationGenerator implements AnnotationGeneratorInterface
+class DoctrineOneToOneAnnotationGenerator implements ParameteredAnnotationGeneratorInterface
 {
-    use DoctrineAnnotationGeneratorTrait;
+    use AnnotationGeneratorTrait;
+    use ParameterAwareTrait;
 
     /**
-     * DoctrineManyToOneAnnotationGenerator constructor.
+     * DoctrineOneToOneAnnotationGenerator constructor.
      *
      * @param array $params
      */
     public function __construct(array $params = [])
     {
+        $this->setAnnotationClass('ORM\\OneToOne');
         $this->setParams($params);
     }
 
@@ -47,6 +52,22 @@ class DoctrineManyToOneAnnotationGenerator implements AnnotationGeneratorInterfa
     public function setCascade(array $cascade)
     {
         $this->addParam('cascade', $cascade);
+    }
+
+    /**
+     * @return bool
+     */
+    public function getOrphanRemoval()
+    {
+        return $this->getParam('orphanRemoval');
+    }
+
+    /**
+     * @param bool $orphanRemoval
+     */
+    public function setOrphanRemoval($orphanRemoval)
+    {
+        $this->addParam('orphanRemoval', $orphanRemoval);
     }
 
     /**
@@ -84,19 +105,5 @@ class DoctrineManyToOneAnnotationGenerator implements AnnotationGeneratorInterfa
     public function setInversedBy($inversedBy)
     {
         $this->addParam('inversedBy', $inversedBy);
-    }
-
-    /**
-     * @return string
-     */
-    public function getAnnotation()
-    {
-        $serializer = new AnnotationParamsSerializer();
-        $options = [];
-        foreach ($serializer->serialize($this->params) as $value) {
-            $options[] = $value;
-        }
-
-        return '@ORM\\ManyToOne('.implode(',', $options).')';
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Kiboko\Component\AkeneoProductValues\AnnotationGenerator;
 
-trait DoctrineAnnotationGeneratorTrait
+trait ParameterAwareTrait
 {
     /**
      * @var array
@@ -10,11 +10,13 @@ trait DoctrineAnnotationGeneratorTrait
     private $params;
 
     /**
-     * @return array
+     * @return \Traversable
      */
     public function getParams()
     {
-        return $this->params;
+        foreach ($this->params as $field => $param) {
+            yield $field => $param;
+        }
     }
 
     /**
@@ -22,16 +24,16 @@ trait DoctrineAnnotationGeneratorTrait
      *
      * @return mixed
      */
-    public function getParam($doctrineTypeOption)
+    public function getParam($param)
     {
-        return $this->params[$doctrineTypeOption];
+        return $this->params[$param];
     }
 
     /**
-     * @param string $doctrineTypeOption
+     * @param string $param
      * @param mixed $value
      */
-    public function addParam($doctrineTypeOption, $value)
+    public function addParam($param, $value)
     {
         $this->params[$doctrineTypeOption] = $value;
     }
@@ -44,4 +46,11 @@ trait DoctrineAnnotationGeneratorTrait
         $this->params = $params;
     }
 
+    /**
+     * @return int
+     */
+    public function countParams()
+    {
+        return count($this->params);
+    }
 }

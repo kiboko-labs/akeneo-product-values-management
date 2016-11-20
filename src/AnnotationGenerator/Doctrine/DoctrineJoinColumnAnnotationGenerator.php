@@ -1,11 +1,15 @@
 <?php
 
+namespace Kiboko\Component\AkeneoProductValues\AnnotationGenerator\Doctrine;
 
-namespace Kiboko\Component\AkeneoProductValues\AnnotationGenerator;
+use Kiboko\Component\AkeneoProductValues\AnnotationGenerator\AnnotationGeneratorTrait;
+use Kiboko\Component\AkeneoProductValues\AnnotationGenerator\ParameterAwareTrait;
+use Kiboko\Component\AkeneoProductValues\AnnotationGenerator\ParameteredAnnotationGeneratorInterface;
 
-class DoctrineJoinColumnAnnotationGenerator implements AnnotationGeneratorInterface
+class DoctrineJoinColumnAnnotationGenerator implements ParameteredAnnotationGeneratorInterface
 {
-    use DoctrineAnnotationGeneratorTrait;
+    use AnnotationGeneratorTrait;
+    use ParameterAwareTrait;
 
     /**
      * DoctrineJoinColumnAnnotationGenerator constructor.
@@ -14,6 +18,7 @@ class DoctrineJoinColumnAnnotationGenerator implements AnnotationGeneratorInterf
      */
     public function __construct(array $params = [])
     {
+        $this->setAnnotationClass('ORM\\JoinColumn');
         $this->setParams($params);
     }
 
@@ -111,19 +116,5 @@ class DoctrineJoinColumnAnnotationGenerator implements AnnotationGeneratorInterf
     public function setColumnDefinition($columnDefinition)
     {
         $this->addParam('columnDefinition', $columnDefinition);
-    }
-
-    /**
-     * @return string
-     */
-    public function getAnnotation()
-    {
-        $serializer = new AnnotationParamsSerializer();
-        $options = [];
-        foreach ($serializer->serialize($this->params) as $value) {
-            $options[] = $value;
-        }
-
-        return '@ORM\\JoinColumn('.implode(',', $options).')';
     }
 }

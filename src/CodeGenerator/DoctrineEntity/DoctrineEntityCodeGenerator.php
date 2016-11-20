@@ -3,6 +3,7 @@
 namespace Kiboko\Component\AkeneoProductValues\CodeGenerator\DoctrineEntity;
 
 use Kiboko\Component\AkeneoProductValues\AnnotationGenerator\AnnotationGeneratorInterface;
+use Kiboko\Component\AkeneoProductValues\AnnotationGenerator\AnnotationSerializer;
 use PhpParser\Builder;
 use PhpParser\BuilderFactory;
 use PhpParser\Node;
@@ -152,23 +153,12 @@ class DoctrineEntityCodeGenerator implements Builder
      */
     protected function compileDocComment()
     {
-        $annotations = $this->prepareAnnotations();
+        $annotationSerializer = new AnnotationSerializer();
 
         return '/**' . PHP_EOL
-        .array_walk($annotations, function($current) {return ' * ' . $current . PHP_EOL;})
+        .array_walk($annotations, function(AnnotationGeneratorInterface $current) use($annotationSerializer) {
+            return $annotationSerializer->serialize($current) . PHP_EOL;
+        })
         .' */';
-    }
-
-    /**
-     * @return array
-     */
-    protected function prepareAnnotations()
-    {
-        $annotations = [];
-        foreach ($this->doctrineAnnotationGenerators as $generator) {
-            $annotations[] = $generator->getAnnotation();
-        }
-
-        return $annotations;
     }
 }

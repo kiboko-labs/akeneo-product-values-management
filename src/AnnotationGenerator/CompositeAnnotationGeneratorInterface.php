@@ -2,7 +2,7 @@
 
 namespace Kiboko\Component\AkeneoProductValues\AnnotationGenerator;
 
-interface AnnotationGeneratorListInterface extends AnnotationGeneratorInterface
+interface CompositeAnnotationGeneratorInterface extends AnnotationGeneratorInterface
 {
     /**
      * @param AnnotationGeneratorInterface

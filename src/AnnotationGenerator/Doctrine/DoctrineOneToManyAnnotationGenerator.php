@@ -1,19 +1,24 @@
 <?php
 
+namespace Kiboko\Component\AkeneoProductValues\AnnotationGenerator\Doctrine;
 
-namespace Kiboko\Component\AkeneoProductValues\AnnotationGenerator;
+use Kiboko\Component\AkeneoProductValues\AnnotationGenerator\AnnotationGeneratorTrait;
+use Kiboko\Component\AkeneoProductValues\AnnotationGenerator\ParameterAwareTrait;
+use Kiboko\Component\AkeneoProductValues\AnnotationGenerator\ParameteredAnnotationGeneratorInterface;
 
-class DoctrineManyToManyAnnotationGenerator implements AnnotationGeneratorInterface
+class DoctrineOneToManyAnnotationGenerator implements ParameteredAnnotationGeneratorInterface
 {
-    use DoctrineAnnotationGeneratorTrait;
+    use AnnotationGeneratorTrait;
+    use ParameterAwareTrait;
 
     /**
-     * DoctrineManyToManyAnnotationGenerator constructor.
+     * DoctrineOneToManyAnnotationGenerator constructor.
      *
      * @param array $params
      */
     public function __construct(array $params = [])
     {
+        $this->setAnnotationClass('ORM\\OneToMany');
         $this->setParams($params);
     }
 
@@ -34,38 +39,6 @@ class DoctrineManyToManyAnnotationGenerator implements AnnotationGeneratorInterf
     }
 
     /**
-     * @return string
-     */
-    public function getMappedBy()
-    {
-        return $this->getParam('mappedBy');
-    }
-
-    /**
-     * @param string $mappedBy
-     */
-    public function setMappedBy($mappedBy)
-    {
-        $this->addParam('mappedBy', $mappedBy);
-    }
-
-    /**
-     * @return string
-     */
-    public function getInversedBy()
-    {
-        return $this->getParam('inversedBy');
-    }
-
-    /**
-     * @param string $inversedBy
-     */
-    public function setInversedBy($inversedBy)
-    {
-        $this->addParam('inversedBy', $inversedBy);
-    }
-
-    /**
      * @return array
      */
     public function getCascade()
@@ -79,6 +52,38 @@ class DoctrineManyToManyAnnotationGenerator implements AnnotationGeneratorInterf
     public function setCascade(array $cascade)
     {
         $this->addParam('cascade', $cascade);
+    }
+
+    /**
+     * @return bool
+     */
+    public function getOrphanRemoval()
+    {
+        return $this->getParam('orphanRemoval');
+    }
+
+    /**
+     * @param bool $orphanRemoval
+     */
+    public function setOrphanRemoval($orphanRemoval)
+    {
+        $this->addParam('orphanRemoval', $orphanRemoval);
+    }
+
+    /**
+     * @return string
+     */
+    public function getMappedBy()
+    {
+        return $this->getParam('mappedBy');
+    }
+
+    /**
+     * @param string $mappedBy
+     */
+    public function setMappedBy($mappedBy)
+    {
+        $this->addParam('mappedBy', $mappedBy);
     }
 
     /**
@@ -116,19 +121,5 @@ class DoctrineManyToManyAnnotationGenerator implements AnnotationGeneratorInterf
     public function setIndexBy($indexBy)
     {
         $this->addParam('indexBy', $indexBy);
-    }
-
-    /**
-     * @return string
-     */
-    public function getAnnotation()
-    {
-        $serializer = new AnnotationParamsSerializer();
-        $options = [];
-        foreach ($serializer->serialize($this->params) as $value) {
-            $options[] = $value;
-        }
-
-        return '@ORM\\ManyToMany('.implode(',', $options).')';
     }
 }

@@ -1,11 +1,15 @@
 <?php
 
+namespace Kiboko\Component\AkeneoProductValues\AnnotationGenerator\Doctrine;
 
-namespace Kiboko\Component\AkeneoProductValues\AnnotationGenerator;
+use Kiboko\Component\AkeneoProductValues\AnnotationGenerator\AnnotationGeneratorTrait;
+use Kiboko\Component\AkeneoProductValues\AnnotationGenerator\ParameterAwareTrait;
+use Kiboko\Component\AkeneoProductValues\AnnotationGenerator\ParameteredAnnotationGeneratorInterface;
 
-class DoctrineEntityAnnotationGenerator implements AnnotationGeneratorInterface
+class DoctrineEntityAnnotationGenerator implements ParameteredAnnotationGeneratorInterface
 {
-    use DoctrineAnnotationGeneratorTrait;
+    use AnnotationGeneratorTrait;
+    use ParameterAwareTrait;
 
     /**
      * DoctrineEntityAnnotationGenerator constructor.
@@ -16,6 +20,7 @@ class DoctrineEntityAnnotationGenerator implements AnnotationGeneratorInterface
      */
     public function __construct($className, $namespace, array $params = [])
     {
+        $this->setAnnotationClass('ORM\\Entity');
         $this->setParams($params + ['type' => $namespace . '\\' . $className]);
     }
 
@@ -33,19 +38,5 @@ class DoctrineEntityAnnotationGenerator implements AnnotationGeneratorInterface
     public function setEntityClass($entityClass)
     {
         $this->addParam('entityClass', $entityClass);
-    }
-
-    /**
-     * @return string
-     */
-    public function getAnnotation()
-    {
-        $serializer = new AnnotationParamsSerializer();
-        $options = [];
-        foreach ($serializer->serialize($this->params) as $value) {
-            $options[] = $value;
-        }
-
-        return '@ORM\\Entity('.implode(',', $options).')';
     }
 }

@@ -1,11 +1,15 @@
 <?php
 
+namespace Kiboko\Component\AkeneoProductValues\AnnotationGenerator\Doctrine;
 
-namespace Kiboko\Component\AkeneoProductValues\AnnotationGenerator;
+use Kiboko\Component\AkeneoProductValues\AnnotationGenerator\AnnotationGeneratorTrait;
+use Kiboko\Component\AkeneoProductValues\AnnotationGenerator\ParameterAwareTrait;
+use Kiboko\Component\AkeneoProductValues\AnnotationGenerator\ParameteredAnnotationGeneratorInterface;
 
-class DoctrineIndexAnnotationGenerator implements AnnotationGeneratorInterface
+class DoctrineIndexAnnotationGenerator implements ParameteredAnnotationGeneratorInterface
 {
-    use DoctrineAnnotationGeneratorTrait;
+    use AnnotationGeneratorTrait;
+    use ParameterAwareTrait;
 
     /**
      * DoctrineIndexAnnotationGenerator constructor.
@@ -14,6 +18,7 @@ class DoctrineIndexAnnotationGenerator implements AnnotationGeneratorInterface
      */
     public function __construct(array $params = [])
     {
+        $this->setAnnotationClass('ORM\\Index');
         $this->setParams($params);
     }
 
@@ -78,19 +83,5 @@ class DoctrineIndexAnnotationGenerator implements AnnotationGeneratorInterface
         $options = $this->getOptions();
         $options[$option] = $value;
         $this->setOptions($options);
-    }
-
-    /**
-     * @return string
-     */
-    public function getAnnotation()
-    {
-        $serializer = new AnnotationParamsSerializer();
-        $options = [];
-        foreach ($serializer->serialize($this->params) as $value) {
-            $options[] = $value;
-        }
-
-        return '@ORM\\Index('.implode(',', $options).')';
     }
 }
