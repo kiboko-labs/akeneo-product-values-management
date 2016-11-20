@@ -206,7 +206,7 @@ class BundleBuilder
      * @param $filePath
      * @param array $definition
      */
-    private function setConfigFile($filePath, array $definition)
+    public function setConfigFile($filePath, array $definition)
     {
         $this->configDefinitions[$filePath] = $definition;
     }
@@ -215,7 +215,7 @@ class BundleBuilder
      * @param $filePath
      * @param array $definition
      */
-    private function mergeConfigFile($filePath, array $definition)
+    public function mergeConfigFile($filePath, array $definition)
     {
         if (isset($this->configDefinitions[$filePath])) {
 
