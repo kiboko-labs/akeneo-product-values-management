@@ -2,6 +2,7 @@
 
 namespace Kiboko\Component\AkeneoProductValues\Builder;
 
+use Kiboko\Component\AkeneoProductValues\CodeGenerator\ProductValueCodeGenerator;
 use Kiboko\Component\AkeneoProductValues\Filesystem\FileInfo;
 use Kiboko\Component\AkeneoProductValues\Filesystem\FilesystemIterator;
 use Kiboko\Component\AkeneoProductValues\Visitor\ClassDiscoveryVisitor;
@@ -34,11 +35,6 @@ class BundleBuilder
     private $classDefinitions;
 
     /**
-     * @var NodeVisitor[]|\SplObjectStorage
-     */
-    private $pendingClassVisitor;
-
-    /**
      * BundleBuilder constructor.
      */
     public function __construct()
@@ -48,7 +44,6 @@ class BundleBuilder
         );
         $this->configDefinitions = [];
         $this->classDefinitions = [];
-        $this->pendingClassVisitor = new \SplObjectStorage();
     }
 
     /**
@@ -172,6 +167,17 @@ class BundleBuilder
                 $this->classDefinitions[$classFQN]
             ]
         );
+    }
+
+    public function ensureProductValueClassExists($classFQN)
+    {
+        if (isset($this->classDefinitions[$classFQN])) {
+            return;
+        }
+
+        $generator = new ProductValueCodeGenerator();
+
+        $this->classDefinitions[$classFQN] = $generator->getNode();
     }
 
     /**

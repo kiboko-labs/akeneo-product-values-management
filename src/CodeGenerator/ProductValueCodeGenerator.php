@@ -177,7 +177,7 @@ class ProductValueCodeGenerator implements Builder
             $root->addStmt($use);
         }
 
-        $class = $factory->class($this->className);
+        $class = $factory->class($this->className)->extend('PimReferenceData');
 
         foreach ($this->internalFields as $generator) {
             $class->addStmt($generator);
