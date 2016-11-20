@@ -32,12 +32,6 @@ class AddCommand extends Command implements FilesystemAwareInterface, ComposerAw
             InputArgument::REQUIRED,
             'The new property\'s type'
         );
-
-        $this->addArgument(
-            'field',
-            InputArgument::REQUIRED,
-            'The new property\'s field name'
-        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
