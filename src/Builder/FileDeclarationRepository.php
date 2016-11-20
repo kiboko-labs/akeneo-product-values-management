@@ -86,9 +86,9 @@ class FileDeclarationRepository
 
     /**
      * @param string $classFQN
-     * @param Node[] $declaration
+     * @param Node\Stmt\Class_ $declaration
      */
-    public function replaceClass($classFQN, array $declaration)
+    public function replaceClass($classFQN, Node\Stmt\Class_ $declaration)
     {
         if (!isset($this->classIndex[$classFQN])) {
             throw new \RuntimeException(sprintf(

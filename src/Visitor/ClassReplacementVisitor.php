@@ -49,7 +49,7 @@ class ClassReplacementVisitor extends NodeVisitorAbstract
     /**
      * @param Node\Stmt\Class_ $classDeclaration
      */
-    public function setClassDeclaration($classDeclaration)
+    public function setClassDeclaration(Node\Stmt\Class_ $classDeclaration)
     {
         $this->classDeclaration = $classDeclaration;
     }
