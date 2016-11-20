@@ -6,6 +6,7 @@ use Kiboko\Component\AkeneoProductValues\CodeGenerator\ProductValueCodeGenerator
 use Kiboko\Component\AkeneoProductValues\Filesystem\FileInfo;
 use Kiboko\Component\AkeneoProductValues\Filesystem\FilesystemIterator;
 use Kiboko\Component\AkeneoProductValues\Visitor\ClassDiscoveryVisitor;
+use Kiboko\Component\AkeneoProductValues\Visitor\ClassReplacementVisitor;
 use League\Flysystem\Filesystem;
 use PhpParser\Builder;
 use PhpParser\Builder\Class_;
@@ -36,7 +37,8 @@ class BundleBuilder
     public function __construct()
     {
         $this->fileDeclarationRepository = new FileDeclarationRepository(
-            new ClassDiscoveryVisitor()
+            new ClassDiscoveryVisitor(),
+            new ClassReplacementVisitor()
         );
         $this->configDefinitions = [];
     }
