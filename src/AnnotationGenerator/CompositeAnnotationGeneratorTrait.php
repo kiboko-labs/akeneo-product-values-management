@@ -42,4 +42,12 @@ trait CompositeAnnotationGeneratorTrait
     {
         $this->children[] = $child;
     }
+
+    /**
+     * @return int
+     */
+    public function countChildren()
+    {
+        return count($this->children);
+    }
 }

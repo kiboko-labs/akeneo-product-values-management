@@ -12,10 +12,20 @@ class AnnotationSerializer
     public function serialize(AnnotationGeneratorInterface $generator, $depth = 0)
     {
         $pad = str_pad('', $depth * 4, ' ');
-        $linePrefix = '     * ' . $pad;
+        $linePrefix = ' * ' . $pad;
 
         if ($generator instanceof CompositeAnnotationGeneratorInterface) {
-            return $linePrefix.'@'.$generator->getAnnotationClass();
+            if ($generator->countChildren() <= 0) {
+                return $linePrefix.'@'.$generator->getAnnotationClass().'()';
+            }
+
+            $serialized = $linePrefix.'@'.$generator->getAnnotationClass().'({';
+            $count = 0;
+            $maxCount = $generator->countChildren();
+            foreach ($generator->getChildren() as $child) {
+                $serialized .= $this->serialize($child, $depth + 1).(++$count < $maxCount ? ',' : '').PHP_EOL;
+            }
+            return $serialized.PHP_EOL.$linePrefix.'})';
         }
 
         if ($generator instanceof ParameteredAnnotationGeneratorInterface) {
@@ -24,7 +34,7 @@ class AnnotationSerializer
             }
 
             return $linePrefix.'@'.$generator->getAnnotationClass().'('.PHP_EOL
-                .$this->serializeParams($generator->getParams(), $depth + 1).PHP_EOL
+                .$this->serializeParams(iterator_to_array($generator->getParams()), $depth + 1).PHP_EOL
             .$linePrefix.')'.PHP_EOL;
         }
 
@@ -39,7 +49,7 @@ class AnnotationSerializer
     private function serializeParams(array $params, $depth)
     {
         $pad = str_pad('', $depth * 4, ' ');
-        $linePrefix = '     * '.$pad;
+        $linePrefix = ' * '.$pad;
         $maxCount = count($params);
 
         $serialized = '';
@@ -62,7 +72,7 @@ class AnnotationSerializer
                 continue;
             }
             if (is_array($value)) {
-                $serialized .= $this->serializeArray($field, $value, $depth + 1).(++$count < $maxCount ? ',' : '').PHP_EOL;
+                $serialized .= $linePrefix.$this->serializeArray($field, $value, $depth).(++$count < $maxCount ? ',' : '').PHP_EOL;
                 continue;
             }
         }
@@ -118,9 +128,13 @@ class AnnotationSerializer
     private function serializeArray($field, array $values, $depth)
     {
         $pad = str_pad('', $depth * 4, ' ');
-        $linePrefix = '     * '.$pad;
-        return (is_numeric($field) ? '' : sprintf('%s={', $field).PHP_EOL)
-            .$this->serialize($values, $depth + 2)
-            .PHP_EOL.$linePrefix.'}';
+        $linePrefix = ' * '.$pad;
+        $count = 0;
+        $maxCount = count($values);
+        $serialized = (is_numeric($field) ? '' : sprintf('%s={', $field).PHP_EOL);
+        foreach ($values as $current) {
+            $serialized .= $this->serialize($current, $depth + 1).(++$count < $maxCount ? ',' : '').PHP_EOL;
+        }
+        return $serialized.PHP_EOL.$linePrefix.'}';
     }
 }

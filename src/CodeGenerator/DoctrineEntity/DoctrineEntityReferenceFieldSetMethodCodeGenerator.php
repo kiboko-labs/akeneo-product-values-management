@@ -149,7 +149,7 @@ class DoctrineEntityReferenceFieldSetMethodCodeGenerator implements Builder
     protected function compileDocComment()
     {
         return '/**' . PHP_EOL
-        .'     * @param \\'.$this->namespace.'\\'.$this->className . ' $' . $this->fieldName
+        .'     * @param \\'.$this->namespace.'\\'.$this->className . ' $' . $this->fieldName . PHP_EOL
         .'     */';
     }
 }

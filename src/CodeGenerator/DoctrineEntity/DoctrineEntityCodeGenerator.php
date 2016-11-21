@@ -156,9 +156,12 @@ class DoctrineEntityCodeGenerator implements Builder
         $annotationSerializer = new AnnotationSerializer();
 
         return '/**' . PHP_EOL
-        .array_walk($annotations, function(AnnotationGeneratorInterface $current) use($annotationSerializer) {
-            return $annotationSerializer->serialize($current) . PHP_EOL;
-        })
+        .array_walk(
+            $this->doctrineAnnotationGenerators,
+            function(AnnotationGeneratorInterface $current) use($annotationSerializer) {
+                return $annotationSerializer->serialize($current) . PHP_EOL;
+            }
+        )
         .' */';
     }
 }

@@ -115,15 +115,12 @@ class DoctrineEntityReferenceFieldCodeGenerator implements Builder
     {
         $annotationSerializer = new AnnotationSerializer();
 
-        return '/**' . PHP_EOL
-        .'     * @param \\'.$this->namespace.'\\'.$this->className
-        .'     *'
-        .array_walk(
-            $this->doctrineAnnotationGenerators,
-            function(AnnotationGeneratorInterface $current) use($annotationSerializer) {
-                return $annotationSerializer->serialize($current) . PHP_EOL;
-            }
-        )
-        .'     */';
+        $serialized = '/**' . PHP_EOL
+        .' * @var \\'.$this->namespace.'\\'.$this->className . PHP_EOL
+        .' *' . PHP_EOL;
+        foreach ($this->doctrineAnnotationGenerators as $annotation) {
+            $serialized .= $annotationSerializer->serialize($annotation) . PHP_EOL;
+        }
+        return $serialized . ' */';
     }
 }

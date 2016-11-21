@@ -128,7 +128,7 @@ class DoctrineEntityScalarFieldSetMethodCodeGenerator implements Builder
     protected function compileDocComment()
     {
         return '/**' . PHP_EOL
-        .'     * @param \\'.$this->typeHint
+        .'     * @param \\'.$this->typeHint . PHP_EOL
         .'     */';
     }
 }
