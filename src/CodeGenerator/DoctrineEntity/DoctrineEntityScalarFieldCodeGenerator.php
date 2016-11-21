@@ -93,11 +93,14 @@ class DoctrineEntityScalarFieldCodeGenerator implements Builder
         $annotationSerializer = new AnnotationSerializer();
 
         return '/**' . PHP_EOL
-        .'    * @param \\'.$this->typeHint
-        .'    *'
-        .array_walk($annotations, function(AnnotationGeneratorInterface $current) use($annotationSerializer) {
-            return $annotationSerializer->serialize($current) . PHP_EOL;
-        })
-        .' */';
+        .'     * @param \\'.$this->typeHint
+        .'     *'
+        .array_walk(
+            $this->doctrineAnnotationGenerators,
+            function(AnnotationGeneratorInterface $current) use($annotationSerializer) {
+                return $annotationSerializer->serialize($current) . PHP_EOL;
+            }
+        )
+        .'     */';
     }
 }

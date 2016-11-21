@@ -142,14 +142,8 @@ class DoctrineEntityReferenceFieldGetMethodCodeGenerator implements Builder
      */
     protected function compileDocComment()
     {
-        $annotationSerializer = new AnnotationSerializer();
-
         return '/**' . PHP_EOL
-        .'    * @return \\'.$this->namespace.'\\'.$this->className
-        .'    *'
-        .array_walk($annotations, function(AnnotationGeneratorInterface $current) use($annotationSerializer) {
-            return $annotationSerializer->serialize($current) . PHP_EOL;
-        })
-        .' */';
+        .'     * @return \\'.$this->namespace.'\\'.$this->className
+        .'     */';
     }
 }
