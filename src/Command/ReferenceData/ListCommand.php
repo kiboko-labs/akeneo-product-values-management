@@ -29,29 +29,42 @@ class ListCommand extends Command implements FilesystemAwareInterface, ComposerA
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        /** @var FormatterHelper $formatterHelper */
-        $formatterHelper = $this->getHelper('formatter');
-
-        $rulesList = $this->getRules();
-        array_walk($rulesList, function(RuleInterface &$current) {
-            $current = sprintf('%s [%s]', $current->getName(), $current->getReferenceClass());
-        });
-
-        $output->writeln(
-            $formatterHelper->formatBlock(
-                $rulesList,
-                'info'
-            )
-        );
-    }
-
-    private function getRules()
-    {
         $rulesRepository = new RulesRepository(
             $this->getComposer(),
             $this->getComposer()->getPluginManager()
         );
 
-        return $rulesRepository->findAll();
+        $this->formatRulesList($rulesRepository, $input, $output);
+    }
+
+    /**
+     * @param RulesRepository $rulesRepository
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     */
+    private function formatRulesList(RulesRepository $rulesRepository, InputInterface $input, OutputInterface $output)
+    {
+        /** @var FormatterHelper $formatterHelper */
+        $formatterHelper = $this->getHelper('formatter');
+
+        $rules = [];
+        foreach ($rulesRepository->findAll() as $rule) {
+            $rules[] = sprintf(
+                '%s (%s), class %s',
+                $rule->getName(),
+                $rule->getType(),
+                $rule->getReferenceClass()
+            );
+        }
+
+        $output->writeln(
+            $formatterHelper->formatBlock(
+                array_merge(
+                    [
+                        'Available reference datas:'
+                    ],
+                    $rules
+                ), 'info')
+        );
     }
 }

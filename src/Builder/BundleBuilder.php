@@ -87,6 +87,7 @@ class BundleBuilder
     /**
      * @param Filesystem $filesystem
      * @param \RecursiveIterator $iterator
+     * @param string $rootPath
      * @param Parser $parser
      */
     private function aggregateClasses(Filesystem $filesystem, \RecursiveIterator $iterator, $rootPath, Parser $parser)
@@ -114,6 +115,7 @@ class BundleBuilder
     /**
      * @param Filesystem $filesystem
      * @param \RecursiveIterator $iterator
+     * @param string $rootPath
      * @param Yaml $parser
      */
     private function aggregateConfigs(Filesystem $filesystem, \RecursiveIterator $iterator, $rootPath, Yaml $parser)

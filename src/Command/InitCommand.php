@@ -69,7 +69,7 @@ class InitCommand extends Command implements FilesystemAwareInterface, ComposerA
         }
 
         $bundleClass = new BundleCodeGenerator($className, $namespace);
-        $extensionClass = new ExtensionCodeGenerator($className, $namespace);
+        $extensionClass = new ExtensionCodeGenerator(preg_replace('/Bundle$/', 'Extension', $className), $namespace);
 
         $extensionClass->addLoadMethodStatement(
             (new ExtensionFileLoaderInstanciationCodeGenerator('loader', 'container'))->getNode()
@@ -87,14 +87,10 @@ class InitCommand extends Command implements FilesystemAwareInterface, ComposerA
             $bundleClass
         );
         $builder->ensureClassExists(
-            'DependencyInjection/' . $vendor . str_replace('Bundle', 'Extension', $bundle) . '.php',
-            $namespace.'\\DependencyInjection\\'.$vendor.str_replace('Bundle', 'Extension', $bundle),
+            'DependencyInjection/' . $vendor . preg_replace('/Bundle$/', 'Extension', $bundle) . '.php',
+            $namespace.'\\DependencyInjection\\'.$vendor.preg_replace('/Bundle$/', 'Extension', $bundle),
             $extensionClass
         );
-        $builder->setConfigFile('Resources/config/services.yml', [
-            'parameters' => [],
-            'services' => [],
-        ]);
         $builder->generate($this->getFilesystem(), $root . '/' . $path);
     }
 }

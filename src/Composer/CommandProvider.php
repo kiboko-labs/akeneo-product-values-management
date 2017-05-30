@@ -52,11 +52,11 @@ class CommandProvider implements CommandProviderCapability
 //                $filesystem,
 //                $this->composer
 //            ),
-//            new DecoratedCommand(
-//                new Command\ReferenceData\ListCommand(),
-//                $filesystem,
-//                $this->composer
-//            ),
+            new DecoratedCommand(
+                new Command\ReferenceData\ListCommand(),
+                $filesystem,
+                $this->composer
+            ),
             new DecoratedCommand(
                 new Command\ReferenceData\BuildCommand(),
                 $filesystem,

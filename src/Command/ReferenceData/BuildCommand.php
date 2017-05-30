@@ -11,6 +11,7 @@ use Kiboko\Component\AkeneoProductValues\Command\FilesystemAwareTrait;
 use Kiboko\Component\AkeneoProductValues\Composer\RulesRepository;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\FormatterHelper;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -24,6 +25,14 @@ class BuildCommand extends Command implements FilesystemAwareInterface, Composer
         $this
             ->setName('akeneo:reference-data:build')
             ->setDescription('Builds a reference data for your AppBundle\'s ProductValue')
+            ->addArgument(
+                'name',
+                InputArgument::REQUIRED
+            )
+            ->addArgument(
+                'type',
+                InputArgument::REQUIRED
+            )
         ;
     }
 
@@ -54,25 +63,23 @@ class BuildCommand extends Command implements FilesystemAwareInterface, Composer
             true
         ));
 
-        $productValueClass = new ProductValueCodeGenerator('ProductValue', $namespace . '\\Model');
-
-        $builder = new BundleBuilder();
-        $builder->setFileDefinition('Entity/ProductValue.php',
-            [
-                $productValueClass->getNode()
-            ]
-        );
-        $builder->initialize($this->getFilesystem(), $root . '/' . $path);
-        $builder->generate($this->getFilesystem(), $root . '/' . $path);
-    }
-
-    private function getRules()
-    {
         $rulesRepository = new RulesRepository(
             $this->getComposer(),
             $this->getComposer()->getPluginManager()
         );
 
-        return $rulesRepository->findAll();
+        $this->formatRulesList($rulesRepository, $input, $output);
+
+        $productValueClass = new ProductValueCodeGenerator('ProductValue', $namespace . '\\Model');
+
+        $builder = new BundleBuilder();
+        $builder->initialize($this->getFilesystem(), $root . '/' . $path);
+        $builder->ensureClassExists(
+            'Entity/ProductValue.php',
+            $namespace.'\\Entity\\ProductValue',
+            $productValueClass
+        );
+        $builder->initialize($this->getFilesystem(), $root . '/' . $path);
+        $builder->generate($this->getFilesystem(), $root . '/' . $path);
     }
 }
