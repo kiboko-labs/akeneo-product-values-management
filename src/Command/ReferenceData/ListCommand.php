@@ -50,9 +50,8 @@ class ListCommand extends Command implements FilesystemAwareInterface, ComposerA
         $rules = [];
         foreach ($rulesRepository->findAll() as $rule) {
             $rules[] = sprintf(
-                '%s (%s), class %s',
-                $rule->getName(),
-                $rule->getType(),
+                '%s, class %s',
+                $rule->getRuleName(),
                 $rule->getReferenceClass()
             );
         }

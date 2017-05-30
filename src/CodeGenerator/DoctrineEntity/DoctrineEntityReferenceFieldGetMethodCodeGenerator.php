@@ -113,7 +113,11 @@ class DoctrineEntityReferenceFieldGetMethodCodeGenerator implements Builder
         ;
 
         if ($this->useStrictTyping === true) {
-            $root->setReturnType($this->namespace.'\\'.$this->className);
+            if ($this->nullable === true) {
+                $root->setReturnType('?\\' . $this->namespace . '\\' . $this->className);
+            } else {
+                $root->setReturnType('\\' . $this->namespace . '\\' . $this->className);
+            }
         }
 
         $root->addStmt(

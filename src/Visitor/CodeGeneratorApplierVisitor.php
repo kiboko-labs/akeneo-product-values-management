@@ -99,7 +99,7 @@ class CodeGeneratorApplierVisitor extends NodeVisitorAbstract
     /**
      * @param Builder $builder
      */
-    public function appendUseCodeGenerator(Builder $builder)
+    public function appendTraitUseCodeGenerator(Builder $builder)
     {
         $this->traitUses[] = $builder;
     }
