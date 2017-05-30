@@ -24,12 +24,7 @@ interface RuleInterface
     /**
      * @return string
      */
-    public function getName();
-
-    /**
-     * @return string
-     */
-    public function getType();
+    public static function getName();
 
     /**
      * @return string
