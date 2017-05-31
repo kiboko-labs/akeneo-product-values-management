@@ -43,8 +43,13 @@ class DoctrineEntityReferenceFieldGetMethodCodeGenerator implements Builder
      * @param bool $nullable
      * @param bool $useStrictTyping
      */
-    public function __construct($fieldName, $className, $namespace = null, $nullable = false, $useStrictTyping = false)
-    {
+    public function __construct(
+        $fieldName,
+        $className,
+        $namespace = null,
+        $nullable = false,
+        $useStrictTyping = true
+    ) {
         $this->fieldName = $fieldName;
         $this->className = $className;
         $this->namespace = $namespace;
@@ -116,7 +121,7 @@ class DoctrineEntityReferenceFieldGetMethodCodeGenerator implements Builder
             if ($this->nullable === true) {
                 $root->setReturnType('?\\' . $this->namespace . '\\' . $this->className);
             } else {
-                $root->setReturnType('\\' . $this->namespace . '\\' . $this->className);
+                $root->setReturnType('?\\' . $this->namespace . '\\' . $this->className);
             }
         }
 
