@@ -7,6 +7,7 @@ namespace Kiboko\Component\AkeneoProductValues\CodeGenerator;
 use Kiboko\Component\AkeneoProductValues\AnnotationGenerator\AnnotationGeneratorInterface;
 use Kiboko\Component\AkeneoProductValues\AnnotationGenerator\AnnotationSerializer;
 use Kiboko\Component\AkeneoProductValues\CodeContext\ClassContext;
+use Kiboko\Component\AkeneoProductValues\CodeContext\ClassReferenceContext;
 use Kiboko\Component\AkeneoProductValues\Helper\ClassName;
 use PhpParser\Builder;
 use PhpParser\BuilderFactory;
@@ -217,11 +218,17 @@ class ClassCodeGenerator implements Builder
             }
         }
 
-        foreach ($this->classContext->getUsedTraits() as $usedTrait) {
-            $root->addStmt(
-                $factory->use(ClassName::extractClass($usedTrait))
-            );
-        }
+        $root->addStmt(
+            new Node\Stmt\TraitUse(
+                array_map(function(ClassReferenceContext $item) {
+                    if ($item->getAlias()) {
+                        return new Node\Name\Relative($item->getAlias());
+                    } else {
+                        return new Node\Name\Relative(ClassName::extractClass($item->getClassName()));
+                    }
+                }, $this->classContext->getUsedTraits())
+            )
+        );
 
         foreach ($this->propertyCodeGenerators as $propertyCodeGenerator) {
             $root->addStmt($propertyCodeGenerator);
