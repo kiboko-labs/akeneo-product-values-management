@@ -11,11 +11,6 @@ use Prophecy\Argument;
 
 class ClassReferenceContextSpec extends ObjectBehavior
 {
-    function let()
-    {
-    }
-
-
     function it_is_initializable()
     {
         $this->beConstructedWith(
@@ -48,10 +43,10 @@ class ClassReferenceContextSpec extends ObjectBehavior
     function it_must_have_a_string_alias()
     {
         $this->beConstructedWith(
-            'Foo', 3
+            'Foo', new \stdClass()
         );
 
-        $this->shouldThrow(\TypeError::class)->duringInstantiation();
+        $this->shouldThrow(\Error::class)->duringInstantiation();
     }
 
     function it_has_an_alias()

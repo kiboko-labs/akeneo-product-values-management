@@ -1,0 +1,6 @@
+suites:
+    product_values:
+        namespace: Kiboko\Component\AkeneoProductValues
+        psr4_prefix: Kiboko\Component\AkeneoProductValues
+        src_path: src
+        spec_path: .
