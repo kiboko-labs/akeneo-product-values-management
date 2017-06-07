@@ -7,6 +7,7 @@ use Kiboko\Component\AkeneoProductValues\CodeGenerator\BundleCodeGenerator;
 use Kiboko\Component\AkeneoProductValues\CodeGenerator\Extension\ExtensionFileLoaderInstanciationCodeGenerator;
 use Kiboko\Component\AkeneoProductValues\CodeGenerator\Extension\ExtensionYamlFileLoadingCodeGenerator;
 use Kiboko\Component\AkeneoProductValues\CodeGenerator\ExtensionCodeGenerator;
+use Kiboko\Component\AkeneoProductValues\CodeGenerator\FormTypeCodeGenerator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -76,7 +77,15 @@ class InitCommand extends Command implements FilesystemAwareInterface, ComposerA
         );
 
         $extensionClass->addLoadMethodStatement(
-            (new ExtensionYamlFileLoadingCodeGenerator('loader', 'services.yml'))->getNode()
+            (new ExtensionYamlFileLoadingCodeGenerator('loader', 'form_types.yml'))->getNode()
+        );
+
+        $extensionClass->addLoadMethodStatement(
+            (new ExtensionYamlFileLoadingCodeGenerator('loader', 'view_elements.yml'))->getNode()
+        );
+
+        $extensionClass->addLoadMethodStatement(
+            (new ExtensionYamlFileLoadingCodeGenerator('loader', 'repositories.yml'))->getNode()
         );
 
         $builder = new BundleBuilder();

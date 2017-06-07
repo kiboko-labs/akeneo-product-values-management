@@ -1,7 +1,9 @@
 <?php
 
-namespace Kiboko\Component\AkeneoProductValues\CodeGenerator;
+namespace Kiboko\Component\AkeneoProductValues\CodeGenerator\Bundle;
 
+use Kiboko\Component\AkeneoProductValues\CodeContext\ClassReferenceContext;
+use Kiboko\Component\AkeneoProductValues\Helper\ClassName;
 use PhpParser\Builder;
 use PhpParser\Node;
 
@@ -13,9 +15,9 @@ class CompilerPassRegistrationCodeGenerator implements Builder
     private $variableName;
 
     /**
-     * @var string
+     * @var ClassReferenceContext
      */
-    private $className;
+    private $class;
 
     /**
      * @var Node\Stmt[]
@@ -23,14 +25,17 @@ class CompilerPassRegistrationCodeGenerator implements Builder
     private $parameterExpressions;
 
     /**
-     * @param string $variableName
-     * @param string $className
+     * @param ClassReferenceContext $class
      * @param Node\Expr[] $parameterExpressions
+     * @param string $variableName
      */
-    public function __construct($className, array $parameterExpressions = [], $variableName = 'container')
-    {
+    public function __construct(
+        ClassReferenceContext $class,
+        array $parameterExpressions = [],
+        $variableName = 'container'
+    ) {
         $this->variableName = $variableName;
-        $this->className = $className;
+        $this->class = $class;
         $this->parameterExpressions = $parameterExpressions;
     }
 
@@ -45,25 +50,25 @@ class CompilerPassRegistrationCodeGenerator implements Builder
     /**
      * @param string $variableName
      */
-    public function setVariableName($variableName)
+    public function setVariableName(string $variableName)
     {
         $this->variableName = $variableName;
     }
 
     /**
-     * @return string
+     * @return ClassReferenceContext
      */
-    public function getClassName()
+    public function getClass(): ClassReferenceContext
     {
-        return $this->className;
+        return $this->class;
     }
 
     /**
-     * @param string $className
+     * @param ClassReferenceContext $class
      */
-    public function setClassName($className)
+    public function setClass(ClassReferenceContext $class)
     {
-        $this->className = $className;
+        $this->class = $class;
     }
 
     /**
@@ -100,7 +105,7 @@ class CompilerPassRegistrationCodeGenerator implements Builder
             'addCompilerPass',
             [
                 new Node\Expr\New_(
-                    new Node\Name\FullyQualified($this->className),
+                    ClassName::buildNameNode($this->class),
                     [],
                     $this->parameterExpressions
                 )

@@ -4,11 +4,6 @@ declare(strict_types=1);
 
 namespace Kiboko\Component\AkeneoProductValues\CodeContext;
 
-use Kiboko\Component\AkeneoProductValues\AnnotationGenerator\AnnotationGeneratorInterface;
-use Kiboko\Component\AkeneoProductValues\CodeGenerator\MethodCodeGenerator;
-use Kiboko\Component\AkeneoProductValues\CodeGenerator\PropertyCodeGenerator;
-use Kiboko\Component\AkeneoProductValues\Helper\ClassName;
-
 class ClassContext
 {
     /**

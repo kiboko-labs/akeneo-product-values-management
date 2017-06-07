@@ -8,12 +8,12 @@ use Kiboko\Component\AkeneoProductValues\AnnotationGenerator\AnnotationGenerator
 use Kiboko\Component\AkeneoProductValues\AnnotationGenerator\AnnotationSerializer;
 use Kiboko\Component\AkeneoProductValues\CodeContext\ClassContext;
 use Kiboko\Component\AkeneoProductValues\CodeContext\ClassReferenceContext;
+use Kiboko\Component\AkeneoProductValues\CodeContext\ContextVisitorInterface;
 use Kiboko\Component\AkeneoProductValues\Helper\ClassName;
-use PhpParser\Builder;
 use PhpParser\BuilderFactory;
 use PhpParser\Node;
 
-class ClassCodeGenerator implements Builder
+class ClassCodeGenerator implements ClassCodeGeneratorInterface
 {
     /**
      * @var FileCodeGenerator
@@ -24,6 +24,11 @@ class ClassCodeGenerator implements Builder
      * @var ClassContext
      */
     private $classContext;
+
+    /**
+     * @var ConstantCodeGeneratorInterface[]
+     */
+    private $constantCodeGenerators;
 
     /**
      * @var PropertyCodeGenerator[]
@@ -50,11 +55,80 @@ class ClassCodeGenerator implements Builder
         FileCodeGenerator $parentGenerator,
         ClassContext $classContext
     ) {
+        $parentGenerator->addChild($this);
+
         $this->parentGenerator = $parentGenerator;
         $this->classContext = $classContext;
+        $this->constantCodeGenerators = [];
         $this->propertyCodeGenerators = [];
         $this->methodCodeGenerators = [];
         $this->annotationGenerators = [];
+    }
+
+    /**
+     * @param ContextVisitorInterface $visitor
+     */
+    public function changeContext(ContextVisitorInterface $visitor): void
+    {
+        $visitor->visit($this->classContext);
+    }
+
+    /**
+     * @param ConstantCodeGeneratorInterface[] $constantCodeGenerators
+     */
+    public function setConstantCodeGenerators(array $constantCodeGenerators): void
+    {
+        $this->constantCodeGenerators = [];
+
+        foreach ($constantCodeGenerators as $constantCodeGenerator) {
+            $this->addConstantCodeGenerator($constantCodeGenerator);
+        }
+    }
+
+    /**
+     * @param ConstantCodeGeneratorInterface $constantCodeGenerator
+     */
+    public function addConstantCodeGenerator(ConstantCodeGeneratorInterface $constantCodeGenerator): void
+    {
+        if (in_array($constantCodeGenerator, $this->constantCodeGenerators)) {
+            return;
+        }
+
+        $this->constantCodeGenerators[] = $constantCodeGenerator;
+    }
+
+    /**
+     * @param ConstantCodeGeneratorInterface $constantCodeGenerator
+     */
+    public function removeConstantCodeGenerator(ConstantCodeGeneratorInterface $constantCodeGenerator): void
+    {
+        $key = array_search($constantCodeGenerator, $this->constantCodeGenerators);
+        if ($key === false) {
+            return;
+        }
+
+        unset($this->constantCodeGenerators[$key]);
+    }
+
+    /**
+     * @return ConstantCodeGeneratorInterface[]
+     */
+    public function getConstantCodeGenerators(): array
+    {
+        return $this->constantCodeGenerators;
+    }
+
+    /**
+     * @param callable $filter
+     *
+     * @return ConstantCodeGeneratorInterface[]
+     */
+    public function findConstantCodeGenerators(callable $filter): array
+    {
+        return array_filter(
+            $this->constantCodeGenerators,
+            $filter
+        );
     }
 
     /**
@@ -103,9 +177,22 @@ class ClassCodeGenerator implements Builder
     }
 
     /**
+     * @param callable $filter
+     *
+     * @return PropertyCodeGenerator[]
+     */
+    public function findPropertyCodeGenerators(callable $filter): array
+    {
+        return array_filter(
+            $this->propertyCodeGenerators,
+            $filter
+        );
+    }
+
+    /**
      * @param MethodCodeGenerator[] $methodCodeGenerators
      */
-    public function setMethodCodeGenerators(array $methodCodeGenerators)
+    public function setMethodCodeGenerators(array $methodCodeGenerators): void
     {
         $this->methodCodeGenerators = [];
 
@@ -117,7 +204,7 @@ class ClassCodeGenerator implements Builder
     /**
      * @param MethodCodeGenerator $methodCodeGenerator
      */
-    public function addMethodCodeGenerator(MethodCodeGenerator $methodCodeGenerator)
+    public function addMethodCodeGenerator(MethodCodeGenerator $methodCodeGenerator): void
     {
         if (in_array($methodCodeGenerator, $this->methodCodeGenerators)) {
             return;
@@ -129,7 +216,7 @@ class ClassCodeGenerator implements Builder
     /**
      * @param MethodCodeGenerator $methodCodeGenerator
      */
-    public function removeMethodCodeGenerator(MethodCodeGenerator $methodCodeGenerator)
+    public function removeMethodCodeGenerator(MethodCodeGenerator $methodCodeGenerator): void
     {
         $key = array_search($methodCodeGenerator, $this->methodCodeGenerators);
         if ($key === false) {
@@ -145,6 +232,19 @@ class ClassCodeGenerator implements Builder
     public function getMethodCodeGenerators(): array
     {
         return $this->methodCodeGenerators;
+    }
+
+    /**
+     * @param callable $filter
+     *
+     * @return MethodCodeGenerator[]
+     */
+    public function findMethodCodeGenerators(callable $filter): array
+    {
+        return array_filter(
+            $this->methodCodeGenerators,
+            $filter
+        );
     }
 
     /**
@@ -193,6 +293,19 @@ class ClassCodeGenerator implements Builder
     }
 
     /**
+     * @param callable $filter
+     *
+     * @return AnnotationGeneratorInterface[]
+     */
+    public function findAnnotationGenerators(callable $filter): array
+    {
+        return array_filter(
+            $this->annotationGenerators,
+            $filter
+        );
+    }
+
+    /**
      * @return Node
      */
     public function getNode()
@@ -229,6 +342,10 @@ class ClassCodeGenerator implements Builder
                 }, $this->classContext->getUsedTraits())
             )
         );
+
+        foreach ($this->constantCodeGenerators as $constantCodeGenerator) {
+            $root->addStmt($constantCodeGenerator);
+        }
 
         foreach ($this->propertyCodeGenerators as $propertyCodeGenerator) {
             $root->addStmt($propertyCodeGenerator);
