@@ -11,7 +11,8 @@
         "symfony/yaml": "^2.7.0",
         "composer/composer": "^1.0",
         "akeneo/pim-community-dev": "^1.6",
-        "akeneo-labs/custom-entity-bundle": "^1.8"
+        "akeneo-labs/custom-entity-bundle": "^1.8",
+        "doctrine/inflector": "1.*"
     },
     "extra": {
         "class": "Kiboko\\Component\\AkeneoProductValues\\Composer\\ProductValuePlugin"

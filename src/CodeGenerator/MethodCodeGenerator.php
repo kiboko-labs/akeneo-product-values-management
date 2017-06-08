@@ -91,6 +91,9 @@ class MethodCodeGenerator implements Builder
         $this->isNullable = false;
         $this->isStatic = false;
         $this->isFinal = false;
+        $this->returnType = new ReturnContext(
+            new ClassReferenceContext('void')
+        );
     }
 
     /**
@@ -323,7 +326,9 @@ class MethodCodeGenerator implements Builder
             $return .= '     * @param '.ClassName::formatDocTypeHintFromArgument($argument) .' $'. $argument->getName() . PHP_EOL;
         }
 
-        if (count($this->arguments) > 0 && $this->returnType->getType()->getName() !== 'void') {
+        if (count($this->arguments) > 0 &&
+            $this->returnType->getType()->getName() !== 'void'
+        ) {
             $return .= '    *' . PHP_EOL;
         }
 

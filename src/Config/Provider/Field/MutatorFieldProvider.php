@@ -3,6 +3,7 @@
 namespace Kiboko\Component\AkeneoProductValues\Config\Provider\Field;
 
 use Doctrine\Common\Inflector\Inflector;
+use Kiboko\Component\AkeneoProductValues\CodeContext\ArgumentContext;
 use Kiboko\Component\AkeneoProductValues\CodeContext\ClassReferenceContext;
 use Kiboko\Component\AkeneoProductValues\CodeContext\ReturnContext;
 use Kiboko\Component\AkeneoProductValues\CodeGenerator\MethodAwareCodeGeneratorInterface;
@@ -11,7 +12,7 @@ use Kiboko\Component\AkeneoProductValues\Config\Provider\ProviderInterface;
 use Kiboko\Component\AkeneoProductValues\Config\Specification\SpecificationInterface;
 use PhpParser\Builder;
 
-class AccessorFieldProvider implements ProviderInterface
+class MutatorFieldProvider implements ProviderInterface
 {
     /**
      * @param SpecificationInterface $specification
@@ -25,8 +26,7 @@ class AccessorFieldProvider implements ProviderInterface
     {
         return $builder instanceof MethodAwareCodeGeneratorInterface &&
             $section === 'fields' &&
-            is_array($data) &&
-            (!isset($data['array']) || $data['array'] !== true);
+            is_array($data);
     }
 
     /**
@@ -40,14 +40,22 @@ class AccessorFieldProvider implements ProviderInterface
         foreach ($data as $field => $config) {
             $method = new MethodCodeGenerator(
                 $builder,
-                'get' . ucfirst(Inflector::camelize($field))
+                'set' . ucfirst(Inflector::camelize($field))
+            );
+
+            $method->addArgument(
+                new ArgumentContext(
+                    $field,
+                    new ClassReferenceContext($config['type'] ?? 'string'),
+                    null,
+                    $config['nullable'] ?? false,
+                    isset($config['array']) && $config['array'] !== true
+                )
             );
 
             $method->setReturnType(
                 new ReturnContext(
-                    new ClassReferenceContext($config['type'] ?? 'string'),
-                    $config['nullable'] ?? false,
-                    false
+                    new ClassReferenceContext('void')
                 )
             );
 

@@ -4,15 +4,18 @@ namespace Kiboko\Component\AkeneoProductValues\Config;
 
 use Kiboko\Component\AkeneoProductValues\CodeContext\ClassContext;
 use Kiboko\Component\AkeneoProductValues\CodeContext\ClassReferenceContext;
-use Kiboko\Component\AkeneoProductValues\CodeContext\ContextVisitorInterface;
 use Kiboko\Component\AkeneoProductValues\CodeContext\ImplementInterfaceContextVisitor;
 use Kiboko\Component\AkeneoProductValues\CodeGenerator\ClassCodeGenerator;
 use Kiboko\Component\AkeneoProductValues\CodeGenerator\FileCodeGenerator;
+use Kiboko\Component\AkeneoProductValues\CodeGenerator\InterfaceCodeGenerator;
+use Kiboko\Component\AkeneoProductValues\Config\Provider\ProviderInterface;
+use Kiboko\Component\AkeneoProductValues\Config\Specification\ConstantAwareSpecificationTrait;
+use Kiboko\Component\AkeneoProductValues\Config\Specification\SpecificationInterface;
 use Kiboko\Component\AkeneoProductValues\Helper\ClassName;
 
-class EntitySpecBuilder implements SpecificationInterface
+class EntitySpecification implements SpecificationInterface
 {
-    use ConstantSpecProvider;
+    use ConstantAwareSpecificationTrait;
     use PropertyAwareSpecBuilderTrait;
     use MethodAwareSpecBuilderTrait;
 
@@ -27,28 +30,65 @@ class EntitySpecBuilder implements SpecificationInterface
     private $psr4Config;
 
     /**
-     * @var EnumSpecBuilder
+     * @var EnumSpecification
      */
     private $enumSpec;
 
     /**
-     * @var ContractSpecBuilder
+     * @var ContractSpecification
      */
     private $contractSpec;
+
+    /**
+     * @var ProviderInterface[]
+     */
+    private $providers;
 
     /**
      * EntitySpecBuilder constructor.
      *
      * @param \string[] $psr4Config
-     * @param EnumSpecBuilder $enumSpec
-     * @param ContractSpecBuilder $contractSpec
+     * @param EnumSpecification $enumSpec
+     * @param ContractSpecification $contractSpec
+     * @param ProviderInterface[] $providers
      */
-    public function __construct(array $psr4Config, EnumSpecBuilder $enumSpec, ContractSpecBuilder $contractSpec)
-    {
+    public function __construct(
+        array $psr4Config,
+        EnumSpecification $enumSpec,
+        ContractSpecification $contractSpec,
+        array $providers
+    ) {
         $this->entities = [];
         $this->psr4Config = $psr4Config;
         $this->enumSpec = $enumSpec;
         $this->contractSpec = $contractSpec;
+
+        foreach ($providers as $provider) {
+            $this->addProvider($provider);
+        }
+    }
+
+    public function addProvider(ProviderInterface $provider): void
+    {
+        $this->providers[] = $provider;
+    }
+
+    /**
+     * @return InterfaceCodeGenerator[]
+     */
+    public function getContracts(): array
+    {
+        return $this->contractSpec->getContracts();
+    }
+
+    /**
+     * @param callable $filter
+     *
+     * @return InterfaceCodeGenerator[]
+     */
+    public function filterContracts(callable $filter): array
+    {
+        return $this->contractSpec->filterContracts($filter);
     }
 
     /**
@@ -68,7 +108,8 @@ class EntitySpecBuilder implements SpecificationInterface
     {
         return array_filter(
             $this->entities,
-            $filter
+            $filter,
+            ARRAY_FILTER_USE_BOTH
         );
     }
 
@@ -87,12 +128,23 @@ class EntitySpecBuilder implements SpecificationInterface
                 ClassName::extractNamespace($item['name'])
             );
 
-            $class = $this->constants[$item['name']] = new ClassCodeGenerator(
+            $class = $this->entities[$item['name']] = new ClassCodeGenerator(
                 $generator,
                 new ClassContext(
                     $item['name']
                 )
             );
+
+            foreach ($item as $section => $data) {
+                foreach ($this->providers as $provider) {
+                    if (!$provider->canProvide($this, $class, $section, $data)) {
+                        continue;
+                    }
+
+                    $provider->provide($this, $class, $section, $data);
+                }
+            }
+            continue;
 
             if (isset($item['contracts'])) {
                 foreach ($item['contracts'] as $contract) {
@@ -100,10 +152,6 @@ class EntitySpecBuilder implements SpecificationInterface
                         new ClassReferenceContext($contract)
                     ));
                 }
-            }
-
-            if (isset($item['constants'])) {
-                $this->buildConstants($class, $item['constants']);
             }
 
             if (isset($item['contracts'])) {

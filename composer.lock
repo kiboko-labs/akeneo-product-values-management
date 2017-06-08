@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "312a71ba00f4696cb77c45947cdf9ee2",
+    "content-hash": "a11b81ee5e85e23d6dce7299ddcb383c",
     "packages": [
         {
             "name": "akeneo-labs/custom-entity-bundle",

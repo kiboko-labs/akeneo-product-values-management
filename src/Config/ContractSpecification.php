@@ -10,7 +10,7 @@ use Kiboko\Component\AkeneoProductValues\Config\Specification\ConstantAwareSpeci
 use Kiboko\Component\AkeneoProductValues\Config\Specification\SpecificationInterface;
 use Kiboko\Component\AkeneoProductValues\Helper\ClassName;
 
-class ContractSpecBuilder implements SpecificationInterface
+class ContractSpecification implements SpecificationInterface
 {
     use ConstantAwareSpecificationTrait;
     use MethodAwareSpecBuilderTrait;
@@ -26,7 +26,7 @@ class ContractSpecBuilder implements SpecificationInterface
     private $psr4Config;
 
     /**
-     * @var EnumSpecBuilder
+     * @var EnumSpecification
      */
     private $enumSpec;
 
@@ -39,10 +39,12 @@ class ContractSpecBuilder implements SpecificationInterface
      * EnumSpecBuilder constructor.
      *
      * @param \string[] $psr4Config
+     * @param EnumSpecification $enumSpec
+     * @param ProviderInterface[] $providers
      */
     public function __construct(
         array $psr4Config,
-        EnumSpecBuilder $enumSpec,
+        EnumSpecification $enumSpec,
         array $providers
     ) {
         $this->contracts = [];
@@ -76,7 +78,8 @@ class ContractSpecBuilder implements SpecificationInterface
     {
         return array_filter(
             $this->contracts,
-            $filter
+            $filter,
+            ARRAY_FILTER_USE_BOTH
         );
     }
 
@@ -104,20 +107,12 @@ class ContractSpecBuilder implements SpecificationInterface
 
             foreach ($item as $section => $data) {
                 foreach ($this->providers as $provider) {
-                    if (!$provider->canProvide($class, $section, $data)) {
+                    if (!$provider->canProvide($this, $class, $section, $data)) {
                         continue;
                     }
 
-                    $provider->provide($class, $section, $data);
+                    $provider->provide($this, $class, $section, $data);
                 }
-            }
-            continue;
-            if (isset($item['constants'])) {
-                $this->buildConstants($class, $item['constants']);
-            }
-
-            if (isset($item['fields'])) {
-                $this->buildMethods($class, $item['fields']);
             }
         }
 

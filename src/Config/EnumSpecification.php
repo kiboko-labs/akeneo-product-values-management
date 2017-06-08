@@ -9,7 +9,7 @@ use Kiboko\Component\AkeneoProductValues\Config\Provider\ProviderInterface;
 use Kiboko\Component\AkeneoProductValues\Config\Specification\SpecificationInterface;
 use Kiboko\Component\AkeneoProductValues\Helper\ClassName;
 
-class EnumSpecBuilder implements SpecificationInterface
+class EnumSpecification implements SpecificationInterface
 {
     /**
      * @var InterfaceCodeGenerator[]
@@ -66,7 +66,8 @@ class EnumSpecBuilder implements SpecificationInterface
     {
         return array_filter(
             $this->enums,
-            $filter
+            $filter,
+            ARRAY_FILTER_USE_BOTH
         );
     }
 
@@ -94,11 +95,11 @@ class EnumSpecBuilder implements SpecificationInterface
 
             foreach ($item as $section => $data) {
                 foreach ($this->providers as $provider) {
-                    if (!$provider->canProvide($class, $section, $data)) {
+                    if (!$provider->canProvide($this, $class, $section, $data)) {
                         continue;
                     }
 
-                    $provider->provide($class, $section, $data);
+                    $provider->provide($this, $class, $section, $data);
                 }
             }
         }

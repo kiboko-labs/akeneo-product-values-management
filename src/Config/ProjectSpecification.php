@@ -4,11 +4,13 @@ namespace Kiboko\Component\AkeneoProductValues\Config;
 
 use Kiboko\Component\AkeneoProductValues\CodeGenerator\FileCodeGenerator;
 use Kiboko\Component\AkeneoProductValues\Config\Provider\ConstantProvider;
+use Kiboko\Component\AkeneoProductValues\Config\Provider\ContractProvider;
 use Kiboko\Component\AkeneoProductValues\Config\Provider\DescriptionProvider;
 use Kiboko\Component\AkeneoProductValues\Config\Provider\Field\AccessorFieldProvider;
+use Kiboko\Component\AkeneoProductValues\Config\Provider\Field\MutatorFieldProvider;
 use Kiboko\Component\AkeneoProductValues\Config\Provider\NameProvider;
 
-class ConfigSpecBuilder
+class ProjectSpecification
 {
     /**
      * @var array
@@ -33,7 +35,7 @@ class ConfigSpecBuilder
     {
         $files = [];
 
-        $enumSpec = new EnumSpecBuilder(
+        $enumSpec = new EnumSpecification(
             $this->psr4Config,
             [
                 new NameProvider(),
@@ -49,7 +51,7 @@ class ConfigSpecBuilder
             );
         }
 
-        $contractSpec = new ContractSpecBuilder(
+        $contractSpec = new ContractSpecification(
             $this->psr4Config,
             $enumSpec,
             [
@@ -57,6 +59,7 @@ class ConfigSpecBuilder
                 new DescriptionProvider(),
                 new ConstantProvider(),
                 new AccessorFieldProvider(),
+                new MutatorFieldProvider(),
             ]
         );
 
@@ -66,12 +69,19 @@ class ConfigSpecBuilder
                 $contractSpec->build($config['contracts'])
             );
         }
-        return $files;
 
-        $entitySpec = new EntitySpecBuilder(
+        $entitySpec = new EntitySpecification(
             $this->psr4Config,
             $enumSpec,
-            $contractSpec
+            $contractSpec,
+            [
+                new NameProvider(),
+                new DescriptionProvider(),
+                new ConstantProvider(),
+                new ContractProvider(),
+                new AccessorFieldProvider(),
+                new MutatorFieldProvider(),
+            ]
         );
 
         if (isset($config['entities'])) {
