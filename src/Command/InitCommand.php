@@ -40,7 +40,7 @@ class InitCommand extends Command implements FilesystemAwareInterface, ComposerA
         $bundle = $this->getComposer()->getConfig()->get('akeneo-appbundle-bundle-name') ?: 'AppBundle';
         $root = $this->getComposer()->getConfig()->get('akeneo-appbundle-root-dir') ?: 'src';
 
-        $className = $vendor . $bundle;
+        $name = $vendor . $bundle;
         if ($vendor === '') {
             $namespace = $bundle;
             $path = $bundle . '/';
@@ -53,8 +53,8 @@ class InitCommand extends Command implements FilesystemAwareInterface, ComposerA
             [
                 'Confirm building the custom Bundle:',
                 'Your vendor namespace: ' . $vendor,
-                'Your bundle name: ' . $className,
-                'Your bundle class FQN: ' . $namespace . '\\' . $className,
+                'Your bundle name: ' . $name,
+                'Your bundle class FQN: ' . $namespace . '\\' . $name,
             ],
             'info',
             true
@@ -69,8 +69,8 @@ class InitCommand extends Command implements FilesystemAwareInterface, ComposerA
             return;
         }
 
-        $bundleClass = new BundleCodeGenerator($className, $namespace);
-        $extensionClass = new ExtensionCodeGenerator(preg_replace('/Bundle$/', 'Extension', $className), $namespace);
+        $bundleClass = new BundleCodeGenerator($name, $namespace);
+        $extensionClass = new ExtensionCodeGenerator(preg_replace('/Bundle$/', 'Extension', $name), $namespace);
 
         $extensionClass->addLoadMethodStatement(
             (new ExtensionFileLoaderInstanciationCodeGenerator('loader', 'container'))->getNode()
@@ -91,8 +91,8 @@ class InitCommand extends Command implements FilesystemAwareInterface, ComposerA
         $builder = new BundleBuilder();
         $builder->initialize($this->getFilesystem(), $root . '/' . $path);
         $builder->ensureClassExists(
-            $className . '.php',
-            $namespace.'\\'.$className,
+            $name . '.php',
+            $namespace.'\\'.$name,
             $bundleClass
         );
         $builder->ensureClassExists(

@@ -88,6 +88,13 @@ trait MethodAwareSpecBuilderTrait
                         new ClassReferenceContext($config['type'])
                     )
                 );
+
+                $class->addMethodCodeGenerator(
+                    $this->methods[] = $this->buildSearchFor(
+                        $class,
+                        $code
+                    )
+                );
             }
 
             $class->addMethodCodeGenerator(
@@ -258,6 +265,34 @@ trait MethodAwareSpecBuilderTrait
         $method->setReturnType(
             new ReturnContext(
                 new ClassReferenceContext('void')
+            )
+        );
+
+        return $method;
+    }
+
+    /**
+     * @param ClassCodeGeneratorInterface $class
+     * @param string $name
+     *
+     * @return MethodCodeGenerator
+     */
+    public function buildSearchFor(
+        ClassCodeGeneratorInterface $class,
+        string $name
+    ): MethodCodeGenerator {
+        $method = new MethodCodeGenerator(
+            $class,
+            'search' . ucfirst(Inflector::camelize(Inflector::singularize($name)))
+        );
+
+        $method->addArgument(
+            new ArgumentContext('callback', new ClassReferenceContext('callable'), null)
+        );
+
+        $method->setReturnType(
+            new ReturnContext(
+                new ClassReferenceContext('array')
             )
         );
 

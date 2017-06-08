@@ -81,7 +81,7 @@ class BundleBuildMethodVisitor extends NodeVisitorAbstract
                 /** @var CompilerPassRegistrationCodeGenerator $builder */
                 foreach ($builders as $index => $builder) {
                     $classFQN = $stmt->args[0]->value->class->toString();
-                    if ($builder->getClassName() !== $classFQN) {
+                    if ($builder->getName() !== $classFQN) {
                         continue;
                     }
 

@@ -73,7 +73,7 @@ class FileCodeGenerator implements Builder
     public function removeUsedReference(ClassReferenceContext $reference): void
     {
         $this->usedReferences = array_filter($this->usedReferences, function(ClassReferenceContext $item) use($reference) {
-            if ($item->getClassName() !== $reference->getClassName()) {
+            if ($item->getName() !== $reference->getName()) {
                 return true;
             }
 

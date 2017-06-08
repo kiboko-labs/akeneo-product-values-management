@@ -11,12 +11,12 @@ class ProductValueCodeGenerator extends ClassCodeGenerator
     /**
      * @param FileCodeGenerator $parentGenerator
      * @param ClassContext $classContext
-     * @param string $className
+     * @param string $name
      */
     public function __construct(
         FileCodeGenerator $parentGenerator,
         ClassContext $classContext,
-        string $className
+        string $name
     ) {
         parent::__construct($parentGenerator, $classContext);
 

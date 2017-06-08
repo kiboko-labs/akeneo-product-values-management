@@ -11,7 +11,7 @@ class FormTypeCodeGenerator implements Builder
     /**
      * @var string
      */
-    private $className;
+    private $name;
 
     /**
      * @var string
@@ -44,7 +44,7 @@ class FormTypeCodeGenerator implements Builder
     private $defaultOptionsMethodStatements;
 
     /**
-     * @param string $className
+     * @param string $name
      * @param string $namespace
      * @param string $formName
      * @param array $useStatements
@@ -52,14 +52,14 @@ class FormTypeCodeGenerator implements Builder
      * @param array $implementedInterfaces
      */
     public function __construct(
-        $className,
+        $name,
         $namespace,
         $formName,
         array $useStatements = [],
         $parentClassName,
         array $implementedInterfaces = []
     ) {
-        $this->className = $className;
+        $this->name = $name;
         $this->namespace = $namespace;
         $this->formName = $formName;
         $this->useStatements = $useStatements + [
@@ -74,17 +74,17 @@ class FormTypeCodeGenerator implements Builder
     /**
      * @return string
      */
-    public function getClassName()
+    public function getName()
     {
-        return $this->className;
+        return $this->name;
     }
 
     /**
-     * @param string $className
+     * @param string $name
      */
-    public function setClassName($className)
+    public function setName($name)
     {
-        $this->className = $className;
+        $this->name = $name;
     }
 
     /**
@@ -92,7 +92,7 @@ class FormTypeCodeGenerator implements Builder
      */
     public function getFQN()
     {
-        return $this->namespace.'\\'.$this->className;
+        return $this->namespace.'\\'.$this->name;
     }
 
     /**
@@ -201,7 +201,7 @@ class FormTypeCodeGenerator implements Builder
         }
 
         $root->addStmt(
-            $factory->class($this->className)
+            $factory->class($this->name)
                 ->extend('Bundle')
                 ->addStmts(
                     [

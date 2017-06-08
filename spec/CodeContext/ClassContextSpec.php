@@ -28,7 +28,7 @@ class ClassContextSpec extends ObjectBehavior
             null
         );
 
-        $this->getClassName()->shouldReturn(\stdClass::class);
+        $this->getName()->shouldReturn(\stdClass::class);
     }
 
     function it_has_a_parent_class(

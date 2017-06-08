@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Kiboko\Component\AkeneoProductValues\CodeContext;
 
-class ClassContext
+class ClassContext implements NamedContextInterface
 {
     /**
      * @var string
      */
-    private $className;
+    private $name;
 
     /**
      * @var ClassReferenceContext
@@ -28,18 +28,18 @@ class ClassContext
 
     /**
      * ClassContext constructor.
-     * @param string $className
+     * @param string $name
      * @param ClassReferenceContext $parentClass
      * @param ClassReferenceContext[] $implementedInterfaces
      * @param ClassReferenceContext[] $usedTraits
      */
     public function __construct(
-        string $className,
+        string $name,
         ?ClassReferenceContext $parentClass = null,
         array $implementedInterfaces = [],
         array $usedTraits = []
     ) {
-        $this->setClassName($className);
+        $this->setName($name);
         $this->setParentClass($parentClass);
 
         $this->implementedInterfaces = [];
@@ -54,19 +54,19 @@ class ClassContext
     }
 
     /**
-     * @param string $className
+     * @param string $name
      */
-    public function setClassName(string $className): void
+    public function setName(string $name): void
     {
-        $this->className = $className;
+        $this->name = $name;
     }
 
     /**
      * @return string
      */
-    public function getClassName(): string
+    public function getName(): string
     {
-        return $this->className;
+        return $this->name;
     }
 
     /**

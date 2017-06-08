@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Kiboko\Component\AkeneoProductValues\CodeGenerator;
 
 use PhpParser\Node;
@@ -43,9 +45,9 @@ class FloatConstantCodeGenerator implements ConstantCodeGeneratorInterface
      */
     public function getNode()
     {
-        return new Node\Stmt\Const_(
+        return new Node\Stmt\ClassConst(
             [
-                $this->constantName => new Node\Scalar\DNumber($this->constantValue),
+                new Node\Const_($this->constantName, new Node\Scalar\DNumber($this->constantValue)),
             ]
         );
     }

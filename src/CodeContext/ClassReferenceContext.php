@@ -11,7 +11,7 @@ class ClassReferenceContext
     /**
      * @var string
      */
-    private $className;
+    private $name;
 
     /**
      * @var string
@@ -21,23 +21,23 @@ class ClassReferenceContext
     /**
      * ClassReferenceContext constructor.
      *
-     * @param string $className
+     * @param string $name
      * @param string $alias
      */
     public function __construct(
-        string $className,
+        string $name,
         string $alias = null
     ) {
-        $this->className = $className;
+        $this->name = $name;
         $this->alias = $alias;
     }
 
     /**
      * @return string
      */
-    public function getClassName(): string
+    public function getName(): string
     {
-        return $this->className;
+        return $this->name;
     }
 
     /**
@@ -53,7 +53,7 @@ class ClassReferenceContext
      */
     public function isScalar(): bool
     {
-        return ClassName::isScalar($this->className);
+        return ClassName::isScalar($this->name);
     }
 
     /**
@@ -61,6 +61,6 @@ class ClassReferenceContext
      */
     public function isAliased(): ?string
     {
-        return ClassName::isAliased($this->className);
+        return ClassName::isAliased($this->name);
     }
 }

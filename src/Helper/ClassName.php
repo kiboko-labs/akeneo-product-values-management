@@ -40,7 +40,7 @@ class ClassName
     {
         return $class->getAlias() ?
             new Node\Name\Relative($class->getAlias()) :
-            new Node\Name\FullyQualified($class->getClassName());
+            new Node\Name\FullyQualified($class->getName());
     }
 
     /**
@@ -60,7 +60,7 @@ class ClassName
         }
 
         return ($isNullable ? '?' : '')
-            . ($class->getAlias() ?: static::extractClass($class->getClassName()));
+            . ($class->getAlias() ?: static::extractClass($class->getName()));
     }
 
     /**
@@ -85,7 +85,7 @@ class ClassName
         bool $isNullable = false,
         bool $isArray = false
     ): string {
-        return ($class->getAlias() ?: ((!$class->isScalar() ? '\\' : '') . static::extractClass($class->getClassName())))
+        return ($class->getAlias() ?: ((!$class->isScalar() ? static::extractClass($class->getName()) : $class->getName())))
             . ($isArray ? '[]' : '')
             . ($isNullable ? '|null' : '');
     }
@@ -101,135 +101,135 @@ class ClassName
     }
 
     /**
-     * @param string $className
+     * @param string $name
      *
      * @return bool
      */
-    public static function isScalar(string $className): bool
+    public static function isScalar(string $name): bool
     {
-        return in_array($className, self::SCALAR_TYPES);
+        return in_array($name, self::SCALAR_TYPES);
     }
 
     /**
-     * @param string $className
+     * @param string $name
      *
      * @return string|null
      */
-    public static function isAliased(string $className): ?string
+    public static function isAliased(string $name): ?string
     {
-        return self::ALIASED_TYPES[$className] ?? null;
+        return self::ALIASED_TYPES[$name] ?? null;
     }
 
     /**
-     * @param string $className
+     * @param string $name
      *
      * @return array
      */
-    public static function extractClassAndNamespace($className): array
+    public static function extractClassAndNamespace($name): array
     {
-        if (static::isScalar($className)) {
-            return [$className, null];
+        if (static::isScalar($name)) {
+            return [$name, null];
         }
 
-        $offset = static::findClassSeparator($className);
+        $offset = static::findClassSeparator($name);
 
         return [
-            static::extractClassFromOffset($className, $offset),
-            static::extractNamespaceFromOffset($className, $offset),
+            static::extractClassFromOffset($name, $offset),
+            static::extractNamespaceFromOffset($name, $offset),
         ];
     }
 
     /**
-     * @param string $className
+     * @param string $name
      *
      * @return bool|int
      */
-    private static function findClassSeparator($className)
+    private static function findClassSeparator($name)
     {
-        return strrpos($className, '\\');
+        return strrpos($name, '\\');
     }
 
     /**
-     * @param string $className
+     * @param string $name
      * @param int $offset
      *
      * @return string
      */
-    private static function extractClassFromOffset(string $className, int $offset): string
+    private static function extractClassFromOffset(string $name, int $offset): string
     {
-        return substr($className, $offset + 1);
+        return substr($name, $offset + 1);
     }
 
     /**
-     * @param string $className
+     * @param string $name
      * @param int $offset
      *
      * @return string|null
      */
-    private static function extractNamespaceFromOffset(string $className, int $offset): ?string
+    private static function extractNamespaceFromOffset(string $name, int $offset): ?string
     {
         if ($offset === false) {
             return null;
         }
 
-        return substr($className, 0, $offset);
+        return substr($name, 0, $offset);
     }
 
     /**
-     * @param string $className
+     * @param string $name
      *
      * @return string
      */
-    public static function extractClass(string $className): string
+    public static function extractClass(string $name): string
     {
-        if (static::isScalar($className)) {
-            return $className;
+        if (static::isScalar($name)) {
+            return $name;
         }
 
-        if (($alias = static::isAliased($className)) !== null) {
+        if (($alias = static::isAliased($name)) !== null) {
             return $alias;
         }
 
-        if (($offset =  static::findClassSeparator($className)) === false) {
-            return $className;
+        if (($offset = static::findClassSeparator($name)) === false) {
+            return $name;
         }
 
-        return static::extractClassFromOffset($className, $offset);
+        return static::extractClassFromOffset($name, $offset);
     }
 
     /**
-     * @param string $className
+     * @param string $name
      *
      * @return string|null
      */
-    public static function extractNamespace(string $className): ?string
+    public static function extractNamespace(string $name): ?string
     {
-        if (static::isScalar($className)) {
+        if (static::isScalar($name)) {
             return null;
         }
 
-        if (($offset =  static::findClassSeparator($className)) === false) {
+        if (($offset =  static::findClassSeparator($name)) === false) {
             return null;
         }
 
-        return static::extractNamespaceFromOffset($className, $offset);
+        return static::extractNamespaceFromOffset($name, $offset);
     }
     /**
      * @param array $psr4Config
-     * @param string $className
+     * @param string $name
      *
      * @return string
      */
-    public static function calculateFilePath(array $psr4Config, string $className)
+    public static function calculateFilePath(array $psr4Config, string $name)
     {
         foreach ($psr4Config as $namespace => $path) {
-            if (strpos($className, $namespace) !== 0) {
+            if (strpos($name, $namespace) !== 0) {
                 continue;
             }
 
-            return $path  . '/' . str_replace('\\', DIRECTORY_SEPARATOR, substr($className, strlen($namespace))) . '.php';
+            return $path  . '/' . str_replace('\\', DIRECTORY_SEPARATOR, substr($name, strlen($namespace))) . '.php';
         }
 
-        return str_replace('\\', DIRECTORY_SEPARATOR, $className) . '.php';
+        return str_replace('\\', DIRECTORY_SEPARATOR, $name) . '.php';
     }
 }

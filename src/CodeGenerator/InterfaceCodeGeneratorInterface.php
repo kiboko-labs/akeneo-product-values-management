@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Kiboko\Component\AkeneoProductValues\CodeGenerator;
 
-interface ClassCodeGeneratorInterface extends
+interface InterfaceCodeGeneratorInterface extends
     ConstantAwareCodeGeneratorInterface,
     MethodAwareCodeGeneratorInterface,
-    PropertyAwareCodeGeneratorInterface,
     AnnotationAwareCodeGeneratorInterface,
     ContextAwareCodeGeneratorInterface
 {

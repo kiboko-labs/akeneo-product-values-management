@@ -19,7 +19,7 @@ class MethodCodeGenerator implements Builder
     const ACCESS_PRIVATE = 'private';
 
     /**
-     * @var ClassCodeGeneratorInterface
+     * @var MethodAwareCodeGeneratorInterface
      */
     private $parentGenerator;
 
@@ -71,13 +71,13 @@ class MethodCodeGenerator implements Builder
     /**
      * PropertyCodeGenerator constructor.
      *
-     * @param ClassCodeGeneratorInterface $parentGenerator
+     * @param MethodAwareCodeGeneratorInterface $parentGenerator
      * @param string $methodName
      * @param AnnotationGeneratorInterface[] $annotationGenerators
      * @param bool $isAbstract
      */
     public function __construct(
-        ClassCodeGeneratorInterface $parentGenerator,
+        MethodAwareCodeGeneratorInterface $parentGenerator,
         string $methodName,
         array $annotationGenerators = [],
         bool $isAbstract = false
@@ -298,12 +298,12 @@ class MethodCodeGenerator implements Builder
                         $argument->isNullable() ?
                             new Node\NullableType(
                                 $argument->getType()->isScalar() ?
-                                    ($argument->getType()->isAliased() ?: $argument->getType()->getClassName()) :
-                                    new Node\Name($argument->getType()->isAliased() ?: $argument->getType()->getClassName())
+                                    ($argument->getType()->isAliased() ?: $argument->getType()->getName()) :
+                                    new Node\Name($argument->getType()->isAliased() ?: $argument->getType()->getName())
                             ) :
                             $argument->getType()->isScalar() ?
-                                ($argument->getType()->isAliased() ?: $argument->getType()->getClassName()) :
-                                new Node\Name($argument->getType()->isAliased() ?: $argument->getType()->getClassName())
+                                ($argument->getType()->isAliased() ?: $argument->getType()->getName()) :
+                                new Node\Name($argument->getType()->isAliased() ?: $argument->getType()->getName())
                     )
             );
         }
@@ -323,11 +323,11 @@ class MethodCodeGenerator implements Builder
             $return .= '     * @param '.ClassName::formatDocTypeHintFromArgument($argument) .' $'. $argument->getName() . PHP_EOL;
         }
 
-        if (count($this->arguments) > 0 && $this->returnType->getType()->getClassName() !== 'void') {
+        if (count($this->arguments) > 0 && $this->returnType->getType()->getName() !== 'void') {
             $return .= '    *' . PHP_EOL;
         }
 
-        if ($this->returnType->getType()->getClassName() !== 'void') {
+        if ($this->returnType->getType()->getName() !== 'void') {
             $return .= '    * @return ' . ClassName::formatDocTypeHint($this->returnType->getType(), $this->returnType->isNullable(), $this->returnType->isArray()) . PHP_EOL;
         }
 

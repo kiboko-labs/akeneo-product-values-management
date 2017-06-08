@@ -18,7 +18,7 @@ class DoctrineEntityReferenceFieldSetMethodCodeGenerator implements Builder
     /**
      * @var string
      */
-    private $className;
+    private $name;
 
     /**
      * @var string
@@ -48,7 +48,7 @@ class DoctrineEntityReferenceFieldSetMethodCodeGenerator implements Builder
     /**
      * ProductValueScalarFieldCodeGenerator constructor.
      * @param string $fieldName
-     * @param string $className
+     * @param string $name
      * @param string|null $namespace
      * @param bool $nullable
      * @param bool $useStrictTyping
@@ -57,7 +57,7 @@ class DoctrineEntityReferenceFieldSetMethodCodeGenerator implements Builder
      */
     public function __construct(
         $fieldName,
-        $className,
+        $name,
         $namespace = null,
         $nullable = false,
         $useStrictTyping = true,
@@ -65,7 +65,7 @@ class DoctrineEntityReferenceFieldSetMethodCodeGenerator implements Builder
         Node $default = null
     ) {
         $this->fieldName = $fieldName;
-        $this->className = $className;
+        $this->name = $name;
         $this->namespace = $namespace;
         $this->nullable = $nullable;
         $this->useStrictTyping = $useStrictTyping;
@@ -92,17 +92,17 @@ class DoctrineEntityReferenceFieldSetMethodCodeGenerator implements Builder
     /**
      * @return string
      */
-    public function getClassName()
+    public function getName()
     {
-        return $this->className;
+        return $this->name;
     }
 
     /**
-     * @param string $className
+     * @param string $name
      */
-    public function setClassName($className)
+    public function setName($name)
     {
-        $this->className = $className;
+        $this->name = $name;
     }
 
     /**
@@ -131,9 +131,9 @@ class DoctrineEntityReferenceFieldSetMethodCodeGenerator implements Builder
         $param = $factory->param($this->fieldName);
         if ($this->useStrictTyping === true) {
             if ($this->nullable === true) {
-                $param->setTypeHint('?\\' . $this->namespace . '\\' . $this->className);
+                $param->setTypeHint('?\\' . $this->namespace . '\\' . $this->name);
             } else {
-                $param->setTypeHint('?\\' . $this->namespace . '\\' . $this->className);
+                $param->setTypeHint('?\\' . $this->namespace . '\\' . $this->name);
             }
         }
 
@@ -174,7 +174,7 @@ class DoctrineEntityReferenceFieldSetMethodCodeGenerator implements Builder
     protected function compileDocComment()
     {
         return '/**' . PHP_EOL
-        .'     * @param \\'.$this->namespace.'\\'.$this->className . ' $' . $this->fieldName . PHP_EOL
+        .'     * @param \\'.$this->namespace.'\\'.$this->name . ' $' . $this->fieldName . PHP_EOL
         .'     */';
     }
 }

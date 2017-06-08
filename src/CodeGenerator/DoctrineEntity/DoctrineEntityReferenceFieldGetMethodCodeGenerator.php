@@ -18,7 +18,7 @@ class DoctrineEntityReferenceFieldGetMethodCodeGenerator implements Builder
     /**
      * @var string
      */
-    private $className;
+    private $name;
 
     /**
      * @var string
@@ -38,20 +38,20 @@ class DoctrineEntityReferenceFieldGetMethodCodeGenerator implements Builder
     /**
      * ProductValueScalarFieldCodeGenerator constructor.
      * @param string $fieldName
-     * @param string $className
+     * @param string $name
      * @param string|null $namespace
      * @param bool $nullable
      * @param bool $useStrictTyping
      */
     public function __construct(
         $fieldName,
-        $className,
+        $name,
         $namespace = null,
         $nullable = false,
         $useStrictTyping = true
     ) {
         $this->fieldName = $fieldName;
-        $this->className = $className;
+        $this->name = $name;
         $this->namespace = $namespace;
         $this->nullable = $nullable;
         $this->useStrictTyping = $useStrictTyping;
@@ -76,17 +76,17 @@ class DoctrineEntityReferenceFieldGetMethodCodeGenerator implements Builder
     /**
      * @return string
      */
-    public function getClassName()
+    public function getName()
     {
-        return $this->className;
+        return $this->name;
     }
 
     /**
-     * @param string $className
+     * @param string $name
      */
-    public function setClassName($className)
+    public function setName($name)
     {
-        $this->className = $className;
+        $this->name = $name;
     }
 
     /**
@@ -119,9 +119,9 @@ class DoctrineEntityReferenceFieldGetMethodCodeGenerator implements Builder
 
         if ($this->useStrictTyping === true) {
             if ($this->nullable === true) {
-                $root->setReturnType('?\\' . $this->namespace . '\\' . $this->className);
+                $root->setReturnType('?\\' . $this->namespace . '\\' . $this->name);
             } else {
-                $root->setReturnType('?\\' . $this->namespace . '\\' . $this->className);
+                $root->setReturnType('?\\' . $this->namespace . '\\' . $this->name);
             }
         }
 
@@ -152,7 +152,7 @@ class DoctrineEntityReferenceFieldGetMethodCodeGenerator implements Builder
     protected function compileDocComment()
     {
         return '/**' . PHP_EOL
-        .'     * @return \\'.$this->namespace.'\\'.$this->className . PHP_EOL
+        .'     * @return \\'.$this->namespace.'\\'.$this->name . PHP_EOL
         .'     */';
     }
 }

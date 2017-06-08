@@ -14,14 +14,14 @@ class DoctrineEntityAnnotationGenerator implements ParameteredAnnotationGenerato
     /**
      * DoctrineEntityAnnotationGenerator constructor.
      *
-     * @param string $className
+     * @param string $name
      * @param string $namespace
      * @param array $params
      */
-    public function __construct($className, $namespace, array $params = [])
+    public function __construct($name, $namespace, array $params = [])
     {
         $this->setAnnotationClass('ORM\\Entity');
-        $this->setParams($params + ['type' => $namespace . '\\' . $className]);
+        $this->setParams($params + ['type' => $namespace . '\\' . $name]);
     }
 
     /**

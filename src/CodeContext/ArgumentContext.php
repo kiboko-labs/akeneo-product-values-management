@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Kiboko\Component\AkeneoProductValues\CodeContext;
 
-class ArgumentContext
+class ArgumentContext implements NamedContextInterface
 {
     /**
      * @var string
@@ -60,6 +60,14 @@ class ArgumentContext
     public function getName(): string
     {
         return $this->name;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName(string $name): void
+    {
+        $this->name = $name;
     }
 
     /**

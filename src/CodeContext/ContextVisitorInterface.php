@@ -5,7 +5,7 @@ namespace Kiboko\Component\AkeneoProductValues\CodeContext;
 interface ContextVisitorInterface
 {
     /**
-     * @param ClassContext $context
+     * @param ContextInterface $context
      */
-    public function visit(ClassContext $context): void;
+    public function visit(ContextInterface $context): void;
 }

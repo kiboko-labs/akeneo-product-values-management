@@ -5,12 +5,20 @@ namespace Kiboko\Component\AkeneoProductValues\Config;
 use Kiboko\Component\AkeneoProductValues\CodeContext\ClassContext;
 use Kiboko\Component\AkeneoProductValues\CodeGenerator\FileCodeGenerator;
 use Kiboko\Component\AkeneoProductValues\CodeGenerator\InterfaceCodeGenerator;
+use Kiboko\Component\AkeneoProductValues\Config\Provider\ProviderInterface;
+use Kiboko\Component\AkeneoProductValues\Config\Specification\ConstantAwareSpecificationTrait;
+use Kiboko\Component\AkeneoProductValues\Config\Specification\SpecificationInterface;
 use Kiboko\Component\AkeneoProductValues\Helper\ClassName;
 
-class ContractSpecBuilder implements SpecBuilderInterface
+class ContractSpecBuilder implements SpecificationInterface
 {
-    use ConstantAwareSpecBuilderTrait;
+    use ConstantAwareSpecificationTrait;
     use MethodAwareSpecBuilderTrait;
+
+    /**
+     * @var InterfaceCodeGenerator[]
+     */
+    private $contracts;
 
     /**
      * @var string[]
@@ -23,14 +31,53 @@ class ContractSpecBuilder implements SpecBuilderInterface
     private $enumSpec;
 
     /**
+     * @var ProviderInterface[]
+     */
+    private $providers;
+
+    /**
      * EnumSpecBuilder constructor.
      *
      * @param \string[] $psr4Config
      */
-    public function __construct(array $psr4Config, EnumSpecBuilder $enumSpec)
-    {
+    public function __construct(
+        array $psr4Config,
+        EnumSpecBuilder $enumSpec,
+        array $providers
+    ) {
+        $this->contracts = [];
         $this->psr4Config = $psr4Config;
         $this->enumSpec = $enumSpec;
+
+        foreach ($providers as $provider) {
+            $this->addProvider($provider);
+        }
+    }
+
+    public function addProvider(ProviderInterface $provider): void
+    {
+        $this->providers[] = $provider;
+    }
+
+    /**
+     * @return InterfaceCodeGenerator[]
+     */
+    public function getContracts(): array
+    {
+        return $this->contracts;
+    }
+
+    /**
+     * @param callable $filter
+     *
+     * @return InterfaceCodeGenerator[]
+     */
+    public function filterContracts(callable $filter): array
+    {
+        return array_filter(
+            $this->contracts,
+            $filter
+        );
     }
 
     /**
@@ -48,13 +95,23 @@ class ContractSpecBuilder implements SpecBuilderInterface
                 ClassName::extractNamespace($item['name'])
             );
 
-            $class = $this->constants[$item['name']] = new InterfaceCodeGenerator(
+            $class = $this->contracts[$item['name']] = new InterfaceCodeGenerator(
                 $generator,
                 new ClassContext(
                     $item['name']
                 )
             );
 
+            foreach ($item as $section => $data) {
+                foreach ($this->providers as $provider) {
+                    if (!$provider->canProvide($class, $section, $data)) {
+                        continue;
+                    }
+
+                    $provider->provide($class, $section, $data);
+                }
+            }
+            continue;
             if (isset($item['constants'])) {
                 $this->buildConstants($class, $item['constants']);
             }

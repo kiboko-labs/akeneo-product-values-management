@@ -24,12 +24,12 @@ class StringConstantCodeGenerator implements ConstantCodeGeneratorInterface
     /**
      * PropertyCodeGenerator constructor.
      *
-     * @param ClassCodeGeneratorInterface $parentGenerator
+     * @param ConstantAwareCodeGeneratorInterface $parentGenerator
      * @param string $constantName
      * @param string $constantValue
      */
     public function __construct(
-        ClassCodeGeneratorInterface $parentGenerator,
+        ConstantAwareCodeGeneratorInterface $parentGenerator,
         string $constantName,
         string $constantValue
     ) {
@@ -43,9 +43,9 @@ class StringConstantCodeGenerator implements ConstantCodeGeneratorInterface
      */
     public function getNode()
     {
-        return new Node\Stmt\Const_(
+        return new Node\Stmt\ClassConst(
             [
-                $this->constantName => new Node\Scalar\String_($this->constantValue),
+                new Node\Const_($this->constantName, new Node\Scalar\String_($this->constantValue)),
             ]
         );
     }

@@ -10,11 +10,16 @@ use Kiboko\Component\AkeneoProductValues\CodeGenerator\ClassCodeGenerator;
 use Kiboko\Component\AkeneoProductValues\CodeGenerator\FileCodeGenerator;
 use Kiboko\Component\AkeneoProductValues\Helper\ClassName;
 
-class EntitySpecBuilder implements SpecBuilderInterface
+class EntitySpecBuilder implements SpecificationInterface
 {
-    use ConstantAwareSpecBuilderTrait;
+    use ConstantSpecProvider;
     use PropertyAwareSpecBuilderTrait;
     use MethodAwareSpecBuilderTrait;
+
+    /**
+     * @var ClassCodeGenerator[]
+     */
+    private $entities;
 
     /**
      * @var string[]
@@ -40,9 +45,31 @@ class EntitySpecBuilder implements SpecBuilderInterface
      */
     public function __construct(array $psr4Config, EnumSpecBuilder $enumSpec, ContractSpecBuilder $contractSpec)
     {
+        $this->entities = [];
         $this->psr4Config = $psr4Config;
         $this->enumSpec = $enumSpec;
         $this->contractSpec = $contractSpec;
+    }
+
+    /**
+     * @return ClassCodeGenerator[]
+     */
+    public function getEntities(): array
+    {
+        return $this->entities;
+    }
+
+    /**
+     * @param callable $filter
+     *
+     * @return ClassCodeGenerator[]
+     */
+    public function filterEntities(callable $filter): array
+    {
+        return array_filter(
+            $this->entities,
+            $filter
+        );
     }
 
     /**
@@ -77,6 +104,12 @@ class EntitySpecBuilder implements SpecBuilderInterface
 
             if (isset($item['constants'])) {
                 $this->buildConstants($class, $item['constants']);
+            }
+
+            if (isset($item['contracts'])) {
+                foreach ($item['contracts'] as $contract) {
+                    //$this->contractSpec->getMethods();
+                }
             }
 
             if (isset($item['fields'])) {

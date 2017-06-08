@@ -5,11 +5,16 @@ namespace Kiboko\Component\AkeneoProductValues\Config;
 use Kiboko\Component\AkeneoProductValues\CodeContext\ClassContext;
 use Kiboko\Component\AkeneoProductValues\CodeGenerator\FileCodeGenerator;
 use Kiboko\Component\AkeneoProductValues\CodeGenerator\InterfaceCodeGenerator;
+use Kiboko\Component\AkeneoProductValues\Config\Provider\ProviderInterface;
+use Kiboko\Component\AkeneoProductValues\Config\Specification\SpecificationInterface;
 use Kiboko\Component\AkeneoProductValues\Helper\ClassName;
 
-class EnumSpecBuilder implements SpecBuilderInterface
+class EnumSpecBuilder implements SpecificationInterface
 {
-    use ConstantAwareSpecBuilderTrait;
+    /**
+     * @var InterfaceCodeGenerator[]
+     */
+    private $enums;
 
     /**
      * @var string[]
@@ -17,13 +22,52 @@ class EnumSpecBuilder implements SpecBuilderInterface
     private $psr4Config;
 
     /**
+     * @var ProviderInterface[]
+     */
+    private $providers;
+
+    /**
      * EnumSpecBuilder constructor.
      *
      * @param \string[] $psr4Config
+     * @param ProviderInterface[] $providers
      */
-    public function __construct(array $psr4Config)
-    {
+    public function __construct(
+        array $psr4Config,
+        array $providers
+    ) {
+        $this->enums = [];
         $this->psr4Config = $psr4Config;
+
+        foreach ($providers as $provider) {
+            $this->addProvider($provider);
+        }
+    }
+
+    public function addProvider(ProviderInterface $provider): void
+    {
+        $this->providers[] = $provider;
+    }
+
+    /**
+     * @return InterfaceCodeGenerator[]
+     */
+    public function getEnums(): array
+    {
+        return $this->enums;
+    }
+
+    /**
+     * @param callable $filter
+     *
+     * @return InterfaceCodeGenerator[]
+     */
+    public function filterEnums(callable $filter): array
+    {
+        return array_filter(
+            $this->enums,
+            $filter
+        );
     }
 
     /**
@@ -41,15 +85,21 @@ class EnumSpecBuilder implements SpecBuilderInterface
                 ClassName::extractNamespace($item['name'])
             );
 
-            $class = $this->constants[$item['name']] = new InterfaceCodeGenerator(
+            $class = $this->enums[$item['name']] = new InterfaceCodeGenerator(
                 $generator,
                 new ClassContext(
                     $item['name']
                 )
             );
 
-            if (isset($item['values'])) {
-                $this->buildConstants($class, $item['values']);
+            foreach ($item as $section => $data) {
+                foreach ($this->providers as $provider) {
+                    if (!$provider->canProvide($class, $section, $data)) {
+                        continue;
+                    }
+
+                    $provider->provide($class, $section, $data);
+                }
             }
         }
 

@@ -3,6 +3,10 @@
 namespace Kiboko\Component\AkeneoProductValues\Config;
 
 use Kiboko\Component\AkeneoProductValues\CodeGenerator\FileCodeGenerator;
+use Kiboko\Component\AkeneoProductValues\Config\Provider\ConstantProvider;
+use Kiboko\Component\AkeneoProductValues\Config\Provider\DescriptionProvider;
+use Kiboko\Component\AkeneoProductValues\Config\Provider\Field\AccessorFieldProvider;
+use Kiboko\Component\AkeneoProductValues\Config\Provider\NameProvider;
 
 class ConfigSpecBuilder
 {
@@ -30,7 +34,12 @@ class ConfigSpecBuilder
         $files = [];
 
         $enumSpec = new EnumSpecBuilder(
-            $this->psr4Config
+            $this->psr4Config,
+            [
+                new NameProvider(),
+                new DescriptionProvider(),
+                new ConstantProvider(),
+            ]
         );
 
         if (isset($config['enums'])) {
@@ -42,7 +51,13 @@ class ConfigSpecBuilder
 
         $contractSpec = new ContractSpecBuilder(
             $this->psr4Config,
-            $enumSpec
+            $enumSpec,
+            [
+                new NameProvider(),
+                new DescriptionProvider(),
+                new ConstantProvider(),
+                new AccessorFieldProvider(),
+            ]
         );
 
         if (isset($config['contracts'])) {
@@ -51,6 +66,7 @@ class ConfigSpecBuilder
                 $contractSpec->build($config['contracts'])
             );
         }
+        return $files;
 
         $entitySpec = new EntitySpecBuilder(
             $this->psr4Config,
